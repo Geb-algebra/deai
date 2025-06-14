@@ -1,0 +1,10 @@
+.DS_Store
+/node_modules/
+
+.wrangler/
+.dev.vars
+worker-configuration.d.ts
+
+# React Router
+/.react-router/
+/build/
