@@ -1,7 +1,3 @@
-# Project Structure and Coding Rules
-
-## Project Overview
-
 # 🧠 Thought-Expanding AI Assist Editor - Functional Specification
 
 ## 1. Overview
@@ -60,10 +56,13 @@ The system supports iterative thinking by continuously offering these questions.
 
 ## 5. Technology Stack (Tentative)
 
-| Feature               | Suggested Technology |
-|-----------------------|----------------------|
-| Editor                 | Quill               |
-| LLM Integration        | WebLLM              |
+| Feature               | Suggested Technology               |
+|-----------------------|------------------------------------|
+| Frontend Framework     | React / Next.js / Remix            |
+| Editor                 | TipTap / Quill / Slate.js          |
+| Input Timing Logic     | `useEffect` + `debounce`           |
+| LLM Integration        | WebLLM / OpenAI API / LM Studio    |
+| State Management       | React state / Zustand              |
 
 ---
 
