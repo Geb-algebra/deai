@@ -68,6 +68,27 @@
 - Focus states for containers
 - Responsive design for containers
 
+### Current Styling Approach and Challenges
+
+**Current Implementation**:
+- **Container**: Grid layout with `grid-template-rows: auto 1fr`
+- **Editor**: Uses `height: 100%` and `max-height: 100%` with `overflow-y: auto`
+- **Theme Integration**: Uses CSS custom properties (`var(--card)`, `var(--card-foreground)`, etc.)
+- **Responsive Design**: Different padding and font sizes for different screen sizes
+
+**Current Height Challenge**:
+- **Problem**: Editor height expands to fit content instead of being constrained to parent element height
+- **Current Setup**: Uses `height: 100%` which makes it grow with content beyond parent bounds
+- **Need**: Editor should be fixed to parent element height and scroll internally when content exceeds available space
+- **Solution Needed**: Ensure editor respects parent container height while maintaining internal scrollability
+
+**Styling Decisions Made**:
+- **Bubble Theme**: No toolbar for distraction-free writing
+- **CSS Variables**: Uses design system colors for consistency
+- **Rounded Corners**: `border-radius: 2rem` for modern appearance
+- **List Indentation**: Removed padding (`padding: 0`) for compact lists
+- **Responsive Typography**: Scaled font sizes for different screen sizes
+
 ### Development Process Insights
 
 1. **Staged Development Approach**

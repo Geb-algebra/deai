@@ -15,6 +15,16 @@ The project has moved from initialization to **implementation phase**. We have s
   - Added heading support (H1-H4) with proper styling
   - Configured idle detection and content change callbacks
   - Documented critical CSS organization pattern in notes.md
+  - Integrated with design system using CSS custom properties
+  - Implemented responsive design with scaled typography
+
+### Current Challenge: Editor Height Management 🚧
+
+- **Issue**: Editor height expands to fit content instead of being constrained to parent element height
+- **Current Setup**: Uses `height: 100%` which makes it grow with content beyond parent bounds
+- **Need**: Editor should be fixed to parent element height and scroll internally when content exceeds available space
+- **Impact**: Affects layout consistency and user experience
+- **Solution Required**: Ensure editor respects parent container height while maintaining internal scrollability
 
 ## Recent Changes
 

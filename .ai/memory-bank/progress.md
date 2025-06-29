@@ -26,6 +26,8 @@
   - Idle detection (5-second timeout)
   - Content change callbacks
   - Responsive design
+  - Design system integration (CSS custom properties)
+  - Modern styling with rounded corners and consistent theming
 - **CSS Organization**: Established critical pattern for Quill editor CSS organization
 
 ## What's Left to Build
@@ -133,6 +135,14 @@
 - CSS organization pattern established and documented
 - No technical debt or bugs in current implementation
 
+### Current Challenges (Identified)
+1. **Editor Height Management**
+   - **Issue**: Editor height expands to fit content instead of being constrained to parent element height
+   - **Current Setup**: Uses `height: 100%` which makes it grow with content beyond parent bounds
+   - **Need**: Editor should be fixed to parent element height and scroll internally when content exceeds available space
+   - **Impact**: Affects layout consistency and user experience
+   - **Solution Required**: Ensure editor respects parent container height while maintaining internal scrollability
+
 ### Potential Challenges (Identified)
 1. **AI Integration Complexity**
    - Prompt engineering for consistent results
@@ -153,6 +163,10 @@
    - AI service integration with Quill editor
    - Question display component design
    - State management for editor and questions
+
+5. **Styling and Height Challenge**
+   - Modern styling with rounded corners and consistent theming
+   - Handling height constraints in the editor
 
 ## Success Metrics
 
