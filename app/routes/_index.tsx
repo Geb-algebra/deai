@@ -4,6 +4,8 @@ import { ClientOnly } from "remix-utils/client-only";
 import { QuillEditor } from "~/components/QuillEditor.client";
 import { Switch } from "~/components/atoms/switch";
 import { useTheme } from "~/context";
+import { cn } from "~/utils/css";
+import styles from "./_index.module.css";
 
 export async function loader() {
 	console.log("hello from loader");
@@ -48,7 +50,7 @@ export default function Home() {
 	};
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div className={cn("h-full bg-background", styles.root)}>
 			{/* Header with theme toggle */}
 			<header className="flex items-center justify-between p-4 border-b">
 				<h1 className="text-xl font-semibold">🧠 Thought-Expanding AI Assist Editor</h1>
@@ -66,9 +68,9 @@ export default function Home() {
 			</header>
 
 			{/* Main content */}
-			<main className="container mx-auto p-6">
+			<main className={cn("container mx-auto p-6 h-full", styles.main)}>
 				{/* Editor section */}
-				<section className="mb-8">
+				<section className="mb-8 h-full">
 					<ClientOnly fallback={<div>Loading...</div>}>
 						{() => (
 							<QuillEditor

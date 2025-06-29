@@ -1,6 +1,7 @@
 import Quill from "quill";
 import "quill/dist/quill.bubble.css";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "~/utils/css";
 import "./QuillEditor.css";
 import styles from "./QuillEditor.module.css";
 
@@ -98,8 +99,14 @@ export function QuillEditor({
 	}, []);
 
 	return (
-		<div className={`${styles.quillEditorContainer} ${className}`}>
-			<div ref={editorRef} className={styles.quillEditor} />
+		<div
+			className={cn(
+				styles.quillEditorContainer,
+				"bg-card h-full w-full rounded-3xl border border-border overflow-y-hidden",
+				className,
+			)}
+		>
+			<div ref={editorRef} className={cn(styles.quillEditor, "h-full w-full overflow-y-hidden")} />
 		</div>
 	);
 }

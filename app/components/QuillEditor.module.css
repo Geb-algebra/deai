@@ -4,19 +4,10 @@
 		"toolbar"
 		"editor";
 	grid-template-rows: auto 1fr;
-	min-height: 600px;
-	max-width: 1200px;
-	margin: 0 auto;
-	border-radius: 12px;
-	overflow: hidden;
-	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .quillEditor {
 	grid-area: editor;
-	min-height: 500px;
-	max-height: 800px;
-	overflow-y: auto;
 }
 
 /* Focus states */
