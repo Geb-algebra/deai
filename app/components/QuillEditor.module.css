@@ -1,0 +1,49 @@
+.quillEditorContainer {
+	display: grid;
+	grid-template-areas:
+		"toolbar"
+		"editor";
+	grid-template-rows: auto 1fr;
+	min-height: 600px;
+	max-width: 1200px;
+	margin: 0 auto;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.quillEditor {
+	grid-area: editor;
+	min-height: 500px;
+	max-height: 800px;
+	overflow-y: auto;
+}
+
+/* Focus states */
+.quillEditorContainer:focus-within {
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px
+		-5px rgba(0, 0, 0, 0.04);
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+	.quillEditorContainer {
+		margin: 0 24px;
+		min-height: 500px;
+	}
+
+	.quillEditor {
+		min-height: 400px;
+	}
+}
+
+@media (max-width: 768px) {
+	.quillEditorContainer {
+		margin: 0 16px;
+		min-height: 400px;
+	}
+
+	.quillEditor {
+		min-height: 300px;
+	}
+}

@@ -36,6 +36,38 @@
    - Efficient handling of large text content
    - Optimized bundle size for fast loading
 
+### Quill Editor CSS Organization Pattern
+
+**CRITICAL RULE**: When working with Quill editor components, CSS organization follows a specific pattern:
+
+1. **Dedicated CSS File**: Create a separate `.css` file in the components directory (e.g., `QuillEditor.css`)
+2. **Global Styles Required**: All `.ql-editor` styles MUST be in a global CSS file, not CSS modules
+3. **Import Pattern**: Import the dedicated CSS file directly in the component:
+   ```tsx
+   import "./QuillEditor.css";
+   ```
+4. **CSS Module Separation**: Use CSS modules only for layout/container styles (`.quillEditorContainer`, `.quillEditor`)
+5. **Why This Pattern**: Quill creates its own DOM structure that doesn't inherit CSS module classes
+
+**File Structure**:
+- `QuillEditor.css` - Global styles for `.ql-editor` elements (headings, lists, base styles)
+- `QuillEditor.module.css` - Scoped styles for container layout and positioning
+- `QuillEditor.client.tsx` - Component with both imports
+
+**Styles That Go in Global CSS**:
+- `.ql-editor` base styles (font-size, line-height, padding)
+- `.ql-editor h1, h2, h3, h4` heading styles
+- `.ql-editor ul, ol, li` list styles
+- `.ql-editor.ql-blank::before` placeholder styles
+- `.ql-editor:focus` focus states
+- Responsive media queries for `.ql-editor`
+
+**Styles That Stay in CSS Modules**:
+- `.quillEditorContainer` layout and positioning
+- `.quillEditor` wrapper styles
+- Focus states for containers
+- Responsive design for containers
+
 ### Development Process Insights
 
 1. **Staged Development Approach**
