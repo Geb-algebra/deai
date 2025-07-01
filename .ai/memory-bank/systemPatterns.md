@@ -4,180 +4,117 @@
 
 ### High-Level Architecture
 
-The application follows a client-server architecture with the following key components:
+The application follows a fully client-side architecture, leveraging a Web Worker for AI processing to ensure the UI remains responsive.
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   WYSIWYG       │    │   Input         │    │   LLM           │
-│   Editor        │◄──►│   Monitor       │◄──►│   Integration   │
-│   (Client)      │    │   (Client)      │    │   (Server)      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Question      │    │   Debounce      │    │   Framework     │
-│   Display       │    │   Logic         │    │   Analysis      │
-│   (Client)      │    │   (Client)      │    │   (Server)      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+```mermaid
+graph TD
+    subgraph Browser
+        subgraph Main Thread
+            A[WYSIWYG Editor] -->|onContentChange| B(Input Monitor);
+            B -->|onIdle (5s)| C{Generate Question};
+            F[Question Display] --> A;
+        end
+
+        subgraph Worker Thread
+            D[WebLLM Engine]
+        end
+
+        C -->|content| D;
+        D -->|question| F;
+    end
 ```
 
 ### Domain-Driven Design Structure
 
-Following the established DDD patterns:
+Following the established DDD patterns, the structure has been adapted for a client-side AI implementation:
 
 ```
 app/
 ├── domains/
-│   ├── editor/
-│   │   ├── models.ts          # Editor content, questions types
-│   │   ├── factories.ts       # Editor content creation
-│   │   ├── repositories.ts    # Content persistence (optional)
-│   │   └── services.ts        # Content analysis, question generation
 │   └── ai/
 │       ├── models.ts          # AI prompts, responses types
 │       ├── factories.ts       # Prompt construction
-│       ├── repositories.ts    # AI service integration
-│       └── services.ts        # LLM communication, response parsing
+│       └── webllm-client.ts   # Client to abstract worker communication
+├── workers/
+│   ├── webllm-worker.ts   # Runs the WebLLM engine
+│   └── types.ts           # Shared types for worker communication
 ├── routes/
-│   └── _index.tsx            # Main editor page
+│   └── _index.tsx            # Main editor page, state management
 └── components/
-    ├── Editor/
-    │   ├── WYSIWYGEditor.tsx
-    │   └── WYSIWYGEditor.module.css
-    └── Questions/
-        ├── QuestionDisplay.tsx
-        └── QuestionDisplay.module.css
+    ├── QuillEditor.client.tsx
+    └── SimpleQuestionDisplay.tsx
 ```
 
 ## Key Technical Decisions
 
 ### 1. Editor Technology Choice
-- **Selected**: TipTap (Prosemirror-based)
+- **Selected**: Quill
 - **Rationale**: 
-  - Rich WYSIWYG capabilities
-  - Good React integration
-  - Extensible for future features
-  - Active maintenance and community
+  - Rich WYSIWYG capabilities with a clean "bubble" theme.
+  - Good React integration and simpler implementation for current needs.
 
 ### 2. Input Monitoring Strategy
 - **Selected**: Debounced input monitoring with 5-second delay
-- **Implementation**: `useEffect` + `setTimeout` with cleanup
+- **Implementation**: `useEffect` + `setTimeout` in the main route component.
 - **Rationale**: 
-  - Prevents excessive API calls
-  - Balances responsiveness with performance
-  - Allows natural typing pauses
+  - Prevents excessive AI processing.
+  - Balances responsiveness with performance.
 
 ### 3. LLM Integration Approach
-- **Selected**: Server-side API integration
+- **Selected**: Client-side inference with WebLLM in a Web Worker.
 - **Rationale**: 
-  - Better security for API keys
-  - Consistent response formatting
-  - Easier to implement rate limiting
-  - Future extensibility for multiple LLM providers
+  - **Privacy**: No user data leaves the browser.
+  - **Performance**: Heavy computation is offloaded from the main UI thread.
+  - **Cost**: Zero server-side cost for AI inference.
+  - **Simplicity**: No need to manage a server or API keys.
 
 ### 4. State Management
-- **Selected**: React state with custom hooks
+- **Selected**: Centralized React state in the main route (`_index.tsx`).
 - **Rationale**: 
-  - Simple state requirements
-  - No complex global state needed
-  - Easy to test and maintain
+  - Creates a clear, unidirectional data flow.
+  - Avoids state synchronization issues between components.
+  - Sufficient for the current application complexity.
 
 ## Design Patterns
 
-### 1. Observer Pattern
-- Input monitoring observes editor changes
-- Question display observes AI response changes
+### 1. Container/Presentational Pattern
+- `_index.tsx` acts as a **Container** component, managing all state and logic.
+- `SimpleQuestionDisplay.tsx` is a **Presentational** component, rendering data passed via props.
 
-### 2. Factory Pattern
-- Domain object creation through factories
-- Ensures proper initialization and validation
+### 2. Worker/Main Thread Communication
+- A dedicated `WebLLMClient` abstracts the `postMessage` communication with the Web Worker, simplifying its use in the main application.
 
-### 3. Repository Pattern
-- Abstract data access layer
-- Enables easy testing and future storage changes
-
-### 4. Service Layer Pattern
-- Business logic isolated in pure functions
-- No side effects, easy to test
-
-### 5. Component Composition
-- Editor and Questions as separate components
-- Clear separation of concerns
-- Reusable and testable
+### 3. Factory Pattern
+- Domain object creation for AI prompts and responses is handled through factories.
 
 ## Component Relationships
 
-### Editor Component
-```
-WYSIWYGEditor
-├── Props: content, onContentChange
-├── State: local content, isTyping
-├── Events: input, blur, focus
-└── Children: TipTap editor instance
-```
-
-### Question Display Component
-```
-QuestionDisplay
-├── Props: questions[], isLoading
-├── State: none (stateless)
-├── Events: none
-└── Children: Question items
-```
-
-### Main Page Component
+### _index.tsx (Container)
 ```
 _index.tsx (Route)
-├── State: content, questions, isAnalyzing
-├── Effects: input monitoring, AI calls
-├── Handlers: content updates, AI responses
-└── Children: WYSIWYGEditor, QuestionDisplay
+├── State: content, question, progress, loading state, error state
+├── Effects: input monitoring, WebLLM loading and generation
+├── Handlers: onContentChange, onIdle
+└── Children: QuillEditor, SimpleQuestionDisplay
+```
+
+### QuillEditor.client.tsx
+```
+QuillEditor.client.tsx
+├── Props: onContentChange, onIdle
+├── State: Internal editor state
+└── Events: Manages editor events and calls back to parent on change/idle
+```
+
+### SimpleQuestionDisplay.tsx (Presentational)
+```
+SimpleQuestionDisplay.tsx
+├── Props: question, modelLoading, progress, isGenerating, error
+├── State: none (stateless)
+└── Renders the UI based entirely on the props it receives.
 ```
 
 ## Data Flow
 
 ### Content Update Flow
 ```
-User Types → Editor Component → Content Change → 
-Input Monitor → Debounce Timer → AI Service Call → 
-Response Processing → Question Display Update
-```
-
-### Error Handling Flow
-```
-API Error → Error Boundary → User Notification → 
-Graceful Degradation → Retry Logic (optional)
-```
-
-## Performance Considerations
-
-### 1. Debouncing
-- 5-second delay prevents excessive API calls
-- Cleanup on component unmount
-
-### 2. Content Optimization
-- Only send meaningful content changes
-- Avoid sending empty or minimal content
-
-### 3. Response Caching
-- Cache similar responses to reduce API calls
-- Implement intelligent deduplication
-
-### 4. Lazy Loading
-- Load editor components on demand
-- Optimize bundle size for core functionality
-
-## Security Patterns
-
-### 1. Input Sanitization
-- Sanitize user content before sending to AI
-- Prevent injection attacks
-
-### 2. API Key Protection
-- Server-side API key storage
-- Rate limiting on AI endpoints
-
-### 3. Content Privacy
-- No persistent storage by default
-- Clear privacy policy for temporary processing 

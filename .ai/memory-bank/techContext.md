@@ -21,9 +21,8 @@
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| **LLM Provider** | OpenAI API / WebLLM | AI question generation |
-| **Prompt Engineering** | Custom templates | Framework-based questioning |
-| **Response Parsing** | Zod schemas | Structured AI responses |
+| **LLM Engine** | WebLLM | In-browser, client-side AI inference |
+| **Prompt Engineering**| Custom templates | Dynamic, language-aware questioning |
 
 ### Development Tools
 
@@ -66,17 +65,13 @@ NODE_ENV=development
 deai/
 ├── app/
 │   ├── domains/           # Domain-driven design
-│   │   ├── editor/        # Editor domain
-│   │   └── ai/           # AI integration domain
+│   │   └── ai/            # AI integration domain
 │   ├── components/        # Reusable UI components
-│   ├── routes/           # React Router pages
-│   ├── utils/            # Utility functions
-│   └── styles/           # Global styles
-├── server/               # Hono server
-├── database/             # Database schema and migrations
-├── tests/                # Test files
-├── .ai/                  # Memory bank and rules
-└── decisions/            # Architecture Decision Records
+│   ├── routes/            # React Router pages
+│   ├── workers/           # Web Worker for AI
+│   └── utils/             # Utility functions
+├── .ai/                   # Memory bank and rules
+└── docs/                  # ADRs and other documents
 ```
 
 ## Technical Constraints
@@ -137,6 +132,13 @@ deai/
 }
 ```
 
+### AI Dependencies
+```json
+{
+  "@mlc-ai/web-llm": "^0.2.79"
+}
+```
+
 ### Validation & Data
 
 ```json
@@ -179,28 +181,30 @@ deai/
 
 ### Vite Configuration
 
+Our Vite configuration is set up to handle TypeScript workers, ensuring they are correctly transpiled and bundled for production. It also includes specific headers required for WebLLM's use of `SharedArrayBuffer`.
+
 ```typescript
 // vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-    proxy: {
-      '/api': 'http://localhost:8787'
-    }
-  },
-  build: {
-    target: 'esnext',
+  worker: {
+    format: 'es',
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          editor: ['@tiptap/react', '@tiptap/pm']
-        }
+        entryFileNames: 'workers/[name]-[hash].js'
       }
     }
+  },
+  server: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    }
   }
-})
+});
 ```
 
 ### TypeScript Configuration

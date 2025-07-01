@@ -2,145 +2,66 @@
 
 ## Current Work Focus
 
-### Project Status: Implementation Phase - UI Components
+### Project Status: Minimal Viable Feature Complete
 
-The project has moved from initialization to **implementation phase**. We have successfully implemented the core WYSIWYG editor component using Quill and established proper CSS organization patterns.
+The project has reached a major milestone. The core functionality—a thought-expanding editor powered by a client-side LLM—is now implemented and working.
 
-### Current Priority: Quill Editor Implementation ✅
+### Completed Feature: Client-Side LLM Integration ✅
 
-- ✅ **Completed**: Implemented Quill editor component with proper CSS organization
-  - Created `QuillEditor.client.tsx` with bubble theme (no toolbar)
-  - Established `QuillEditor.css` for global styles (headings, lists, base styles)
-  - Maintained `QuillEditor.module.css` for layout/container styles
-  - Added heading support (H1-H4) with proper styling
-  - Configured idle detection and content change callbacks
-  - Documented critical CSS organization pattern in notes.md
-  - Integrated with design system using CSS custom properties
-  - Implemented responsive design with scaled typography
-
-### Current Challenge: Editor Height Management 🚧
-
-- **Issue**: Editor height expands to fit content instead of being constrained to parent element height
-- **Current Setup**: Uses `height: 100%` which makes it grow with content beyond parent bounds
-- **Need**: Editor should be fixed to parent element height and scroll internally when content exceeds available space
-- **Impact**: Affects layout consistency and user experience
-- **Solution Required**: Ensure editor respects parent container height while maintaining internal scrollability
+- ✅ **Architecture**: Successfully implemented a full client-side AI architecture using WebLLM running in a Web Worker. This ensures user privacy and removes the need for a server-side AI backend.
+- ✅ **UI Components**: The `QuillEditor` and `SimpleQuestionDisplay` components are fully integrated. The data flow from user input to AI-generated question is complete.
+- ✅ **User Experience**: The UI now includes a detailed progress indicator for model loading. The AI correctly detects the input language and responds in kind.
+- ✅ **Code Quality**: Refactored the UI components to centralize state management in the main route, improving clarity and maintainability. Simplified the AI interaction to use a single-question format, removing complex parsing logic.
 
 ## Recent Changes
 
-### Quill Editor Implementation (Current Session)
-- **Component Structure**: 
-  - `QuillEditor.client.tsx` - Main component with Quill integration
-  - `QuillEditor.css` - Global styles for `.ql-editor` elements
-  - `QuillEditor.module.css` - Scoped styles for container layout
-- **Features Implemented**:
-  - Bubble theme (toolbar-free interface)
-  - Heading support (H1-H4) with proper styling
-  - List support with configurable indentation
-  - Idle detection (5-second timeout)
-  - Content change callbacks
-  - Responsive design
-- **CSS Organization Pattern**: Established critical rule for Quill editor CSS organization
+### WebLLM Implementation (Current Session)
+- **Technology**: Integrated `@mlc-ai/web-llm` for in-browser inference.
+- **Worker**: Created a TypeScript-based worker (`webllm-worker.ts`) to handle all LLM operations.
+- **Vite Config**: Updated `vite.config.ts` to correctly handle worker transpilation using the `new URL(...)` pattern.
+- **Domain**: Established a clear `ai` domain with a `WebLLMClient` to abstract worker communication.
+- **UI**: Implemented model loading progress (percentage, MB loaded, elapsed time) and connected the AI response to the display component.
 
 ### Memory Bank Updates
-- Updated `.ai/notes.md` with Quill editor CSS organization pattern
-- Documented the requirement for dedicated CSS files for Quill components
-- Established clear separation between global styles and CSS module styles
+- Updated `progress.md` and `activeContext.md` to reflect the completion of the minimal viable LLM feature.
 
 ## Next Steps
 
 ### Immediate Next Steps (Ready to Continue)
 
-1. **Complete Editor Integration**
-   - Integrate QuillEditor into main application routes
-   - Set up content state management
-   - Implement AI question display component
-
-2. **AI Integration Setup**
-   - Create AI service for question generation
-   - Implement prompt engineering for thought expansion
-   - Set up API communication layer
-
-3. **Question Display Component**
-   - Design and implement question display UI
-   - Create loading states and error handling
-   - Integrate with editor idle detection
-
-### Development Stages (Following Rules)
-
-According to the development process defined in the rules:
-
-1. **Object Creation Stage** (May be needed)
-   - Create domain objects for editor content and AI interactions
-   - Define models, factories, and repositories
-   - Set up database schema if persistence is needed
-
-2. **Service Implementation Stage** (Next Priority)
-   - Plan AI integration services
-   - Design question generation logic
-   - Create comprehensive test strategy
-
-3. **Application Implementation Stage** (In Progress)
-   - Continue UI component development
-   - Integrate components into routes
-   - Implement complete user flow
+1.  **Testing**
+    - [ ] Write unit tests for the `WebLLMClient`.
+    - [ ] Write component tests for `SimpleQuestionDisplay`.
+    - [ ] Write integration tests for the full editor-to-AI-response flow.
+2.  **Code Cleanup & Refinement**
+    - [ ] Review the current implementation for any potential refactoring opportunities.
+    - [ ] Ensure all code adheres to the established project style guides.
+3.  **Explore Future Features**
+    - [ ] Begin planning for features listed in `projectbrief.md`, such as thought history or customizable questions.
 
 ## Active Decisions and Considerations
 
 ### Technical Decisions Made
 
-1. **Editor Technology**: Quill (instead of TipTap)
-   - Rich WYSIWYG capabilities with bubble theme
-   - Good React integration
-   - Simpler implementation for current needs
-
-2. **CSS Organization**: Dedicated CSS file pattern
-   - Global styles for Quill elements in separate `.css` file
-   - Layout styles in CSS modules
-   - Direct import pattern for global styles
-
-3. **Input Monitoring**: Debounced approach with 5-second delay
-   - Prevents excessive API calls
-   - Balances responsiveness with performance
-
-4. **Theme Selection**: Bubble theme for distraction-free writing
-   - No toolbar for clean interface
-   - Keyboard shortcuts for formatting
-   - Focus on content creation
+1.  **AI Integration Strategy**: WebLLM for client-side inference.
+    - **Reasoning**: Prioritizes user privacy and eliminates server costs and complexity.
+2.  **Architecture**: Web Worker for AI processing.
+    - **Reasoning**: Prevents blocking the main UI thread during model loading and inference, ensuring a smooth user experience.
+3.  **Language Handling**: Delegated to the LLM.
+    - **Reasoning**: A simple and elegant solution that avoids adding a separate language-detection library.
+4.  **State Management**: Centralized state in the main route component.
+    - **Reasoning**: Solved data synchronization issues and created a clear, unidirectional data flow.
 
 ### Open Questions
 
-1. **AI Integration Strategy**
-   - OpenAI API vs WebLLM for local inference
-   - Cost considerations vs privacy benefits
-   - Fallback strategies for API failures
-
-2. **Question Framework Implementation**
-   - Which thinking frameworks to prioritize?
-   - How to structure prompts for consistent results?
-   - Quality control for generated questions
-
-3. **State Management**
-   - How to manage editor content state?
-   - Question history and display state?
-   - Session persistence considerations
+1.  **Error Handling**: How can we make error handling more robust? (e.g., if the model fails to generate a valid question).
+2.  **Model Selection**: Should we allow users to select different models? What are the UX and technical implications?
+3.  **Persistence**: Now that the core feature is working, should we revisit the decision for no data persistence? What are the privacy trade-offs?
 
 ### Current Constraints
 
-1. **Development Environment**
-   - Project structure established
-   - Quill editor component implemented
-   - Ready for AI integration
-
-2. **API Integration**
-   - Need OpenAI API key for development
-   - Rate limiting considerations
-   - Error handling strategies
-
-3. **Performance Requirements**
-   - 3-second response time target
-   - Efficient handling of large text content
-   - Optimized bundle size
+- The application is now dependent on browser support for WebGPU and Web Workers.
+- Initial model load time can still be significant depending on the user's network and device.
 
 ## Work Context
 

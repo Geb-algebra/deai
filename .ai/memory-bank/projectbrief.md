@@ -36,7 +36,7 @@ The system supports iterative thinking by continuously offering these questions.
 
 ### 3.4 Question Generation & Display
 - Extract up to 3 thought-provoking questions from the LLM output
-- Display these under the editor as “AI prompts to expand your thinking”
+- Display these under the editor as "AI prompts to expand your thinking"
 - Rendered in Markdown-style bullet list
 
 ### 3.5 Thought Loop
@@ -50,7 +50,7 @@ The system supports iterative thinking by continuously offering these questions.
 - **UI/UX**: Clean, distraction-free interface for focused thinking
 - **Response Time**: Ideally within 3 seconds from input inactivity to question display
 - **Privacy**: No data persistence; input is processed temporarily only
-- **Local Inference (optional)**: Can use WebLLM for client-side execution
+- **Local Inference**: Runs the LLM entirely on the client-side using WebLLM.
 
 ---
 
@@ -78,7 +78,7 @@ The system supports iterative thinking by continuously offering these questions.
 ## 7. Target Users
 
 - Creative professionals, planners, researchers, students
-- People who “think by writing”
+- People who "think by writing"
 - Anyone who feels stuck and would benefit from external questioning support
 
 ---
