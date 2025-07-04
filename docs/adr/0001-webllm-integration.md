@@ -1,5 +1,9 @@
 # ADR 0001: WebLLM Integration
 
+## Status
+
+Superseded
+
 ## Context
 
 We are integrating WebLLM into our application to provide AI-driven thought expansion features. The goal is to analyze user input and generate thought-provoking questions to enhance the user's thinking process.
@@ -22,10 +26,6 @@ We are integrating WebLLM into our application to provide AI-driven thought expa
 5. **Fallback Mechanisms**
    - **Reason**: Ensure application resilience in case of AI failures.
    - **Impact**: Graceful degradation with fallback questions if AI generation fails.
-
-## Status
-
-Accepted
 
 ## Consequences
 
