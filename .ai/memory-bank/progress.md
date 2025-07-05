@@ -2,149 +2,75 @@
 
 ## What Works
 
-### ✅ Memory Bank Documentation
-- Complete project documentation established
-- Clear technical specifications defined
-- Development process and rules documented
-- Ready for implementation phase
+### ✅ Memory Bank & Project Foundation
+- Complete project documentation structure established.
+- Core project setup with Vite, React, and TypeScript is in place.
+- Development process, rules, and architectural patterns are documented.
+- The decision to pivot to a BYOK model has been made and documented in ADRs.
 
-### ✅ Project Planning
-- System architecture designed
-- Technology stack selected
-- Component structure planned
-- Development stages defined
+### ✅ Core UI Components
+- **Quill Editor**: A functional `QuillEditor.client.tsx` component exists.
+- **Display Area**: A `SimpleQuestionDisplay.tsx` component exists for showing AI output.
 
-### ✅ Quill Editor Implementation
-- **Component Structure**: Complete Quill editor component implemented
-  - `QuillEditor.client.tsx` - Main component with Quill integration
-  - `QuillEditor.css` - Global styles for `.ql-editor` elements
-  - `QuillEditor.module.css` - Scoped styles for container layout
-- **Features Implemented**:
-  - Bubble theme (toolbar-free interface)
-  - Heading support (H1-H4) with proper styling
-  - List support with configurable indentation
-  - Idle detection (5-second timeout)
-  - Content change callbacks
-  - Responsive design
-  - Design system integration (CSS custom properties)
-  - Modern styling with rounded corners and consistent theming
-- **CSS Organization**: Established critical pattern for Quill editor CSS organization
+## What's Deprecated (Previously Completed)
 
-### ✅ Client-Side AI Integration (WebLLM)
-- **Web Worker**: Implemented a TypeScript-based Web Worker to run the WebLLM engine, preventing UI blocking.
-- **Vite Configuration**: Configured Vite to correctly transpile and bundle the TypeScript worker for production.
-- **Progress Tracking**: Added a progress indicator for model loading, showing percentage, downloaded MB, and elapsed time.
-- **Dynamic Prompting**: The LLM prompt is now engineered to detect the user's language and respond in kind.
-- **Simplified Response**: The AI now provides a single, direct question, removing the need for complex client-side parsing.
+### ❌ Client-Side AI Integration (WebLLM)
+- The entire WebLLM-based implementation, including the web worker, client, and progress tracking, is now deprecated due to performance and quality limitations. This work will be removed from the codebase.
 
 ## What's Left to Build
 
-### 🚧 Phase 1: Project Foundation (Complete)
-- ✅ Initialize React Router v7 project with Vite
-- ✅ Set up TypeScript configuration
-- ✅ Install and configure core dependencies
-- ✅ Establish project structure following DDD patterns
-- ✅ Configure development tools (ESLint, Prettier, Vitest)
+### 🚧 Phase 1: BYOK Foundation (Not Started)
+- [ ] Install SDKs: `openai`, `@anthropic-ai/sdk`, `@google/generative-ai`.
+- [ ] Define common AI domain models (`LLMClient`) in `app/domains/ai/models.ts`.
+- [ ] Implement `clientLoader` and `clientAction` in `app/routes/_index.tsx` for `localStorage` key management.
 
-### 🚧 Phase 2: Domain Objects (Complete)
-- ✅ Create editor domain models
-  - ✅ Editor content types
-  - ✅ Question types
-- ✅ Create AI domain models
-  - ✅ AI prompt types
-  - ✅ AI response types
-- ✅ Implement factories for all domain objects
-- ✅ Implement client for worker communication (`WebLLMClient`)
+### 🚧 Phase 2: Provider Implementation (Not Started)
+- [ ] Implement `OpenAIClient`.
+- [ ] Implement `ClaudeClient`.
+- [ ] Implement `GeminiClient`.
+- [ ] Implement the `AIFactory` to select the correct client.
 
-### 🚧 Phase 3: Core Services (Complete)
-- ✅ Content analysis services (handled by LLM)
-- ✅ AI integration services (WebLLM client and worker)
-- ✅ Question generation services (handled by LLM)
+### 🚧 Phase 3: UI and Integration (Not Started)
+- [ ] Build the `ApiKeyModal` with `useFetcher`.
+- [ ] Add a provider selection UI to the main page.
+- [ ] Integrate the main page with `clientLoader` data.
+- [ ] Trigger the AI generation flow on user idle.
+- [ ] Stream the response to the `SimpleQuestionDisplay` component.
 
-### 🚧 Phase 4: UI Components (Complete)
-- ✅ WYSIWYG Editor component
-- ✅ Question Display component
-- ✅ Main page layout with component composition
+### 🚧 Phase 4: Cleanup & Testing (Not Started)
+- [ ] Remove all deprecated WebLLM files and dependencies.
+- [ ] Write unit tests for all new clients and the factory.
+- [ ] Write integration tests for the full BYOK flow.
 
-### 🚧 Phase 5: Integration & Testing (Partially Complete)
-- ✅ Route implementation with full data flow
-- [ ] Comprehensive testing
-- ✅ Performance optimization (via Web Worker)
-
-### 🚧 Phase 6: Deployment & Polish (Not Started)
-- [ ] Production build configuration
-- [ ] Server deployment setup
-- [ ] Environment configuration
-- [ ] Monitoring and logging
-- [ ] Documentation updates
-- [ ] User testing and feedback
+### 🚧 Phase 5: Deployment & Polish (Not Started)
+- [ ] Production build configuration.
+- [ ] Deployment setup.
+- [ ] Final documentation updates.
 
 ## Current Status
 
-### Project Phase: Implementation - UI Components 🚧
-- **Status**: In Progress
-- **Progress**: ~25%
-- **Next Phase**: AI Integration
-
-### Development Readiness
-- ✅ **Documentation**: Complete
-- ✅ **Architecture**: Designed
-- ✅ **Technology Stack**: Selected
-- ✅ **Development Process**: Defined
-- ✅ **Core Editor Component**: Implemented
-- ✅ **AI Integration**: Complete
-- 🚧 **Testing**: Not Started
-- 🚧 **Deployment**: Not Started
+### Project Phase: Implementation - BYOK Foundation 🚧
+- **Status**: Not Started
+- **Progress**: 0%
+- **Next Phase**: Provider Implementation
 
 ### Key Milestones
-1. ✅ **Memory Bank Initialization** - Complete
-2. ✅ **Project Foundation** - Complete
-3. ✅ **Core Editor Component** - Complete
-4. ✅ **AI Integration** - Complete
-5. ✅ **Question Display** - Complete
-6. 🚧 **Integration & Testing** - In Progress
-7. 🚧 **Deployment & Polish** - Not started
+1. ✅ **Project Pivot & Planning** - Complete
+2. 🚧 **BYOK Foundation** - Not Started
+3. 🚧 **Provider Implementation** - Not Started
+4. 🚧 **UI and Integration** - Not Started
+5. 🚧 **Cleanup & Testing** - Not Started
+6. 🚧 **Deployment & Polish** - Not started
 
 ## Known Issues
 
-### No Current Issues
-- Quill editor component working correctly
-- CSS organization pattern established and documented
-- Client-side AI feature is implemented and functional.
-- The data flow between the editor, worker, and display components is working correctly.
-
-### Current Challenges (Identified)
-1. **Editor Height Management**
-   - **Issue**: Editor height expands to fit content instead of being constrained to parent element height
-   - **Current Setup**: Uses `height: 100%` which makes it grow with content beyond parent bounds
-   - **Need**: Editor should be fixed to parent element height and scroll internally when content exceeds available space
-   - **Impact**: Affects layout consistency and user experience
-   - **Solution Required**: Ensure editor respects parent container height while maintaining internal scrollability
+### No Current Implementation Issues
+- The previous implementation has been deprecated. We are starting from a clean slate regarding the AI backend.
 
 ### Potential Challenges (Identified)
-1. **AI Integration Complexity**
-   - Prompt engineering for consistent results
-   - Rate limiting and cost management
-   - Error handling for API failures
-
-2. **Performance Requirements**
-   - 3-second response time target
-   - Efficient handling of large text content
-   - Optimized bundle size
-
-3. **User Experience**
-   - Balancing AI assistance with natural writing flow
-   - Preventing interruption of user's thinking process
-   - Ensuring questions are genuinely helpful
-
-4. **Technical Implementation**
-   - AI service integration with Quill editor
-   - Question display component design
-   - State management for editor and questions
-
-5. **Styling and Height Challenge**
-   - Modern styling with rounded corners and consistent theming
-   - Handling height constraints in the editor
+1. **API Differences**: Handling variations in request/response formats, streaming protocols, and error handling across three different SDKs.
+2. **Unified Error Handling**: Creating a consistent way to display errors from different providers to the user.
+3. **UI State Management**: Managing the states for different providers, their keys, and loading/error states in a clean way.
 
 ## Success Metrics
 

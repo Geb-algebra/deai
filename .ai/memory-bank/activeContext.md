@@ -2,66 +2,61 @@
 
 ## Current Work Focus
 
-### Project Status: Minimal Viable Feature Complete
+### Project Status: Pivoting to Multi-Provider BYOK Architecture
 
-The project has reached a major milestone. The core functionality—a thought-expanding editor powered by a client-side LLM—is now implemented and working.
+The project is undergoing a strategic pivot away from a client-side WebLLM implementation to a more flexible and powerful "Bring Your Own Key" (BYOK) model. The core goal is to allow users to connect directly to multiple high-quality LLM providers (OpenAI, Anthropic, Google) from their browser.
 
-### Completed Feature: Client-Side LLM Integration ✅
-
-- ✅ **Architecture**: Successfully implemented a full client-side AI architecture using WebLLM running in a Web Worker. This ensures user privacy and removes the need for a server-side AI backend.
-- ✅ **UI Components**: The `QuillEditor` and `SimpleQuestionDisplay` components are fully integrated. The data flow from user input to AI-generated question is complete.
-- ✅ **User Experience**: The UI now includes a detailed progress indicator for model loading. The AI correctly detects the input language and responds in kind.
-- ✅ **Code Quality**: Refactored the UI components to centralize state management in the main route, improving clarity and maintainability. Simplified the AI interaction to use a single-question format, removing complex parsing logic.
+This decision, documented in [ADR-0003](./../docs/adr/0003-use-byok-for-llm-integration.md) and [ADR-0004](./../docs/adr/0004-multi-provider-byok-llm-integration.md), prioritizes model quality and user flexibility while maintaining a strong commitment to privacy by keeping all user data and keys on the client-side.
 
 ## Recent Changes
 
-### WebLLM Implementation (Current Session)
-- **Technology**: Integrated `@mlc-ai/web-llm` for in-browser inference.
-- **Worker**: Created a TypeScript-based worker (`webllm-worker.ts`) to handle all LLM operations.
-- **Vite Config**: Updated `vite.config.ts` to correctly handle worker transpilation using the `new URL(...)` pattern.
-- **Domain**: Established a clear `ai` domain with a `WebLLMClient` to abstract worker communication.
-- **UI**: Implemented model loading progress (percentage, MB loaded, elapsed time) and connected the AI response to the display component.
-
-### Memory Bank Updates
-- Updated `progress.md` and `activeContext.md` to reflect the completion of the minimal viable LLM feature.
+### Architectural Pivot (Current Session)
+- **Decision**: Deprecated the WebLLM architecture due to performance and quality concerns.
+- **New Strategy**: Adopted a multi-provider BYOK strategy.
+- **Documentation**: Updated `systemPatterns.md` and `techContext.md` to reflect the new architecture. Created ADR-0004 to document the technical plan for the multi-provider implementation.
 
 ## Next Steps
 
-### Immediate Next Steps (Ready to Continue)
+### Immediate Next Steps (Implementation Plan)
 
-1.  **Testing**
-    - [ ] Write unit tests for the `WebLLMClient`.
-    - [ ] Write component tests for `SimpleQuestionDisplay`.
-    - [ ] Write integration tests for the full editor-to-AI-response flow.
-2.  **Code Cleanup & Refinement**
-    - [ ] Review the current implementation for any potential refactoring opportunities.
-    - [ ] Ensure all code adheres to the established project style guides.
-3.  **Explore Future Features**
-    - [ ] Begin planning for features listed in `projectbrief.md`, such as thought history or customizable questions.
+1.  **Dependencies**
+    - [ ] Install `openai`, `@anthropic-ai/sdk`, and `@google/generative-ai` packages.
+2.  **Domain Implementation**
+    - [ ] Define a common `LLMClient` interface in `app/domains/ai/models.ts`.
+    - [ ] Implement `OpenAIClient`, `ClaudeClient`, and `GeminiClient`, each conforming to the `LLMClient` interface.
+    - [ ] Create the `AIFactory` to dynamically instantiate the correct client.
+3.  **Client-Side Data Management**
+    - [ ] Implement the `clientLoader` in `app/routes/_index.tsx` to read API keys from `localStorage`.
+    - [ ] Implement the `clientAction` in `app/routes/_index.tsx` to save API keys to `localStorage`.
+4.  **UI Implementation**
+    - [ ] Create the `ApiKeyModal.tsx` component with a `<fetcher.Form>` managed by `useFetcher`.
+    - [ ] Add a provider selection UI to the main page.
+    - [ ] Connect the UI to the `clientLoader` data and the `clientAction`.
+5.  **Integration**
+    - [ ] Wire the main component to trigger the AI completion flow using the factory and the selected client.
+    - [ ] Handle the streamed response and display it in `SimpleQuestionDisplay.tsx`.
+6.  **Cleanup**
+    - [ ] Remove all obsolete WebLLM files (`webllm-client.ts`, `webllm-worker.ts`, etc.).
+    - [ ] Uninstall the `@mlc-ai/web-llm` package.
 
 ## Active Decisions and Considerations
 
 ### Technical Decisions Made
 
-1.  **AI Integration Strategy**: WebLLM for client-side inference.
-    - **Reasoning**: Prioritizes user privacy and eliminates server costs and complexity.
-2.  **Architecture**: Web Worker for AI processing.
-    - **Reasoning**: Prevents blocking the main UI thread during model loading and inference, ensuring a smooth user experience.
-3.  **Language Handling**: Delegated to the LLM.
-    - **Reasoning**: A simple and elegant solution that avoids adding a separate language-detection library.
-4.  **State Management**: Centralized state in the main route component.
-    - **Reasoning**: Solved data synchronization issues and created a clear, unidirectional data flow.
+1.  **AI Integration Strategy**: Multi-Provider "Bring Your Own Key" (BYOK).
+    - **Reasoning**: Maximizes model quality and user flexibility while ensuring privacy. See ADR-0003.
+2.  **Architecture**: Direct client-to-provider API calls.
+    - **Reasoning**: Avoids server infrastructure costs and complexity. All data remains in the user's browser.
+3.  **API Key Management**: Remix `clientLoader`/`clientAction` with `localStorage`.
+    - **Reasoning**: Aligns with framework best practices for client-side state, ensuring a robust and maintainable implementation. See ADR-0004.
+4.  **Modal Interactions**: `useFetcher` for the API key modal.
+    - **Reasoning**: Provides a seamless UX for submitting data without a full page navigation.
 
 ### Open Questions
 
-1.  **Error Handling**: How can we make error handling more robust? (e.g., if the model fails to generate a valid question).
-2.  **Model Selection**: Should we allow users to select different models? What are the UX and technical implications?
-3.  **Persistence**: Now that the core feature is working, should we revisit the decision for no data persistence? What are the privacy trade-offs?
-
-### Current Constraints
-
-- The application is now dependent on browser support for WebGPU and Web Workers.
-- Initial model load time can still be significant depending on the user's network and device.
+1.  **Error Handling**: How should we unify and display errors from different provider APIs (e.g., invalid key, rate limits, model errors)?
+2.  **Model Selection**: Should we allow users to select specific models within a provider (e.g., GPT-4 vs. GPT-3.5)?
+3.  **Key Encryption**: Should we consider client-side encryption for keys stored in `localStorage` as a future enhancement?
 
 ## Work Context
 

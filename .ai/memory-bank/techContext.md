@@ -21,8 +21,7 @@
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| **LLM Engine** | WebLLM | In-browser, client-side AI inference |
-| **Prompt Engineering**| Custom templates | Dynamic, language-aware questioning |
+| **LLM Integration** | Multi-Provider BYOK | Direct client-to-API communication with OpenAI, Anthropic, and Google. |
 
 ### Development Tools
 
@@ -135,7 +134,9 @@ deai/
 ### AI Dependencies
 ```json
 {
-  "@mlc-ai/web-llm": "^0.2.79"
+  "openai": "^4.20.0",
+  "@anthropic-ai/sdk": "^0.18.0",
+  "@google/generative-ai": "^0.1.0"
 }
 ```
 
@@ -145,7 +146,10 @@ deai/
 {
   "zod": "^3.0.0",
   "drizzle-orm": "^0.29.0",
-  "drizzle-kit": "^0.20.0"
+  "drizzle-kit": "^0.20.0",
+  "openai": "^4.20.0",
+  "@anthropic-ai/sdk": "^0.18.0",
+  "@google/generative-ai": "^0.1.0"
 }
 ```
 
@@ -181,7 +185,7 @@ deai/
 
 ### Vite Configuration
 
-Our Vite configuration is set up to handle TypeScript workers, ensuring they are correctly transpiled and bundled for production. It also includes specific headers required for WebLLM's use of `SharedArrayBuffer`.
+Our Vite configuration is set up to handle TypeScript and React.
 
 ```typescript
 // vite.config.ts
@@ -190,20 +194,6 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  worker: {
-    format: 'es',
-    rollupOptions: {
-      output: {
-        entryFileNames: 'workers/[name]-[hash].js'
-      }
-    }
-  },
-  server: {
-    headers: {
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Opener-Policy': 'same-origin',
-    }
-  }
 });
 ```
 

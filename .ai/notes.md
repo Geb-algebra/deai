@@ -122,3 +122,18 @@ The memory bank provides clear direction for:
 - Clear success metrics defined for each phase
 - Performance and accessibility requirements established
 - Security considerations documented from the start
+
+### Operator Workflow Preferences
+
+1.  **Remix/React Router Data Flow**:
+    -   **Rule**: When managing client-side state on a route, use `clientLoader` and `clientAction`.
+    -   **Data Access**: The main route component should access data from `clientLoader` via its `loaderData` prop, not the `useLoaderData` hook.
+    -   **Non-Navigation Mutations**: For UI interactions that mutate data but shouldn't trigger a navigation (e.g., in a modal), always use the `useFetcher` hook.
+
+### Agent Process & Learning
+
+1.  **Core Directive**: My primary workflow is to read the entire Memory Bank at the start of any task, then update it with any new plans *before* executing them. This is not optional. I must not suggest implementation steps until the documentation accurately reflects the current plan.
+
+REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.
+
+# General Coding Rules
