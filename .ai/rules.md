@@ -207,6 +207,8 @@ If you think you have to make some changes to domain objects, you have to ask th
 
 ### React Router's Route modules
 
+You have to implement data loading and data mutation with React Router's Route Modules, specifically `loader, action` for server data and `clientLoader, clientAction` for client data. 
+
 Typical implementation of Route modules are like this:
 
 ```tsx
@@ -214,37 +216,50 @@ Typical implementation of Route modules are like this:
 import { Link } from "react-router";
 import type { Route } from './+types/sample-route';
 
+export function meta({ request }: Route.MetaArgs) {
+  return [
+    { title: "pagename" },
+    { name: "description", content: "blah blah" },
+  ];
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
-    // ...
-    return { say: "hello" };
+  // ...
+  return { say: "hello" };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-    try {
-        // do some mutations according to request
-        return { error: null };
-    } catch (e) {
-        return { error: "some error" };
-    }
+  try {
+    // do some mutations according to request
+    return { error: null };
+  } catch (e) {
+    return { error: "some error" };
+  }
+}
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  // ...
+  return { say: "hello" };
 }
 
-export function meta({ request }: Route.MetaArgs) {
- return [
-  { title: "pagename" },
-  { name: "description", content: "blah blah" },
- ];
+export async function clientAction({ request }: Route.ClientActionArgs) {
+  try {
+    // do some mutations according to request
+    return { error: null };
+  } catch (e) {
+    return { error: "some error" };
+  }
 }
 
 export default function Home({ loaderData, actionData }: Route.ComponentProps) {
- return (
-        // page component
- );
+  return (
+    // page component
+  );
 }
 ```
 
-Keep in mind that `loader` and `action` runs in server while other Route Modules (`meta, clientLoader, clientAction` etc and the default export component) runs in client. You can't include client-only codes (`window`, `localStorage` etc) in `loader` and `action` and can't include server-only codes (interacting with DB etc) in other Route Modules.
+`loader` and `action` runs in server while other Route Modules (`meta, clientLoader, clientAction` etc and the default export component) runs in client. You can't include client-only codes (`window`, `localStorage` etc) in `loader` and `action` and can't include server-only codes (interacting with DB etc) in other Route Modules.
 
-Also keep in mind that you should not seek any files from `+types` directory. The directory does not exist. it is an alias directory defined by react-router. 
+You should not seek any files from `+types` directory. The directory does not exist. it is an alias directory defined by react-router. 
 
 ## ADR
 
