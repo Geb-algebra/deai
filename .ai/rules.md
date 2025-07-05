@@ -176,7 +176,7 @@ This is a set of rules you have to follow
 - hono: for HTTP server
 - tailwind css: for styling shapes and colors of HTML elements and texts (not used for defining layouts and placements of elements)
 - css modules: for defining layouts and placements of elements (not used for styling shapes and colors)
-- shadcn/ui: for UI components but as copy-and-paste style, not installed by its CLI like `npx shadcn/ui@latest add button`. `cn` utility for shadcn components is in `app/utils/css.ts`
+- shadcn/ui: for UI components. installed via its CLI like `npx shadcn/ui@latest add button`. `cn` utility for shadcn components is in `app/utils/css.ts`
 
 ## design rules
 

@@ -1,4 +1,4 @@
-import type { AIRequest, AIResponse } from "./models";
+import type { AIRequest, AIResponse, LlmConfig } from "./models";
 
 // Factory for creating AIRequest objects
 export function createAIRequest(content: string): AIRequest {
@@ -19,5 +19,12 @@ export function createAIResponse(
 		timestamp: new Date(),
 		success,
 		error,
+	};
+}
+
+export function createDefaultLlmConfig(): LlmConfig {
+	return {
+		provider: "gemini",
+		apiKey: "",
 	};
 }
