@@ -1,14 +1,15 @@
 import type { Route } from "./+types/_index";
 
 import { MoonIcon, SunIcon } from "lucide-react";
-import { useCallback, useState } from "react";
-import { data } from "react-router";
+import { useFetcher } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
+import { z } from "zod";
 import { QuillEditor } from "~/components/QuillEditor.client";
 import { Switch } from "~/components/atoms/switch";
 import { useTheme } from "~/context";
-import { LlmConfigSchema, createDefaultLlmConfig } from "~/domains/ai";
-import { getLlmConfig, setLlmConfig } from "~/domains/ai/repositories";
+import { createDefaultLlmConfig } from "~/domains/ai";
+import { getLlmConfig } from "~/domains/ai/repositories";
+import { generateQuestion } from "~/domains/ai/services";
 import { cn } from "~/utils/css";
 import styles from "./_index.module.css";
 import { LlmConfig } from "./llm-config";
@@ -32,30 +33,28 @@ export async function clientLoader() {
 	}
 }
 
+const QuestionerSchema = z.object({
+	content: z.string().min(1, "Content is required"),
+	previousQuestions: z.array(z.string()).optional().default([]),
+});
+
 export async function clientAction({ request }: Route.ClientActionArgs) {
-	const formData = await request.formData();
-	try {
-		const llmConfig = LlmConfigSchema.parse(Object.fromEntries(formData));
-		await setLlmConfig(llmConfig);
-		return { error: null };
-	} catch (error) {
-		return data({ error: "Invalid LLM config" }, { status: 400 });
+	const llmConfig = await getLlmConfig();
+	const formData = await request.json();
+	const { content, previousQuestions } = QuestionerSchema.parse(formData);
+	const question = await generateQuestion(content, previousQuestions, llmConfig);
+	if (!question) {
+		return previousQuestions;
 	}
+	const newQuestions = [...previousQuestions, question].slice(-10);
+	return newQuestions;
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
 	const { theme, setTheme } = useTheme();
-	const [content, setContent] = useState<string>("");
-	const [isIdle, setIsIdle] = useState(false);
-
-	const handleContentChange = (newContent: string) => {
-		setContent(newContent);
-		setIsIdle(false);
-	};
-
-	const handleIdle = useCallback(() => {
-		setIsIdle(true);
-	}, []);
+	const fetcher = useFetcher<typeof clientAction>();
+	const questions = fetcher.data;
+	console.log(questions);
 
 	const toggleTheme = () => {
 		setTheme(theme === "light" ? "dark" : "light");
@@ -81,8 +80,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 						{() => (
 							<QuillEditor
 								placeholder="Start writing your thoughts freely... Use bullet points, paragraphs, or any format that helps you think."
-								onContentChange={handleContentChange}
-								onIdle={handleIdle}
+								onIdle={(content) => {
+									fetcher.submit(
+										{ content, previousQuestions: questions || [] },
+										{ method: "post", encType: "application/json" },
+									);
+								}}
 							/>
 						)}
 					</ClientOnly>
@@ -90,6 +93,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 				<aside className={styles.sidebar}>
 					<LlmConfig />
+					<div className="flex flex-col gap-2">
+						{questions?.map((question, index) => (
+							<div key={index}>{question}</div>
+						))}
+						{fetcher.state === "submitting" && <div>Generating...</div>}
+						{fetcher.state === "loading" && <div>Loading...</div>}
+						{fetcher.state === "idle" && <div>Idle</div>}
+					</div>
 				</aside>
 			</main>
 		</div>

@@ -1,4 +1,4 @@
-import { useFetcher, useLoaderData } from "react-router";
+import { data, useFetcher, useRouteLoaderData } from "react-router";
 import { Button } from "~/components/atoms/button";
 import {
 	Dialog,
@@ -18,10 +18,28 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/atoms/select";
-import type { clientAction, clientLoader } from "./_index";
+import { LlmConfigSchema } from "~/domains/ai";
+import { getLlmConfig, setLlmConfig } from "~/domains/ai/repositories";
+import type { Route } from "./+types/llm-config";
+import type { clientLoader } from "./_index";
+
+export async function clientAction({ request }: Route.ClientActionArgs) {
+	const llmConfig = await getLlmConfig();
+	if (llmConfig.apiKey === "") {
+		return data({ error: "LLM config is not set" }, { status: 400 });
+	}
+	const formData = await request.formData();
+	try {
+		const llmConfig = LlmConfigSchema.parse(Object.fromEntries(formData));
+		await setLlmConfig(llmConfig);
+		return { error: null };
+	} catch (error) {
+		return data({ error: "Invalid LLM config" }, { status: 400 });
+	}
+}
 
 export function LlmConfig() {
-	const llmConfig = useLoaderData<typeof clientLoader>();
+	const llmConfig = useRouteLoaderData<typeof clientLoader>("routes/_index");
 	const configFetcher = useFetcher<typeof clientAction>();
 	const { error } = configFetcher.data ?? { error: null };
 
@@ -44,7 +62,7 @@ export function LlmConfig() {
 							</DialogDescription>
 						</DialogHeader>
 
-						<configFetcher.Form method="post" className="space-y-4">
+						<configFetcher.Form action="/llm-config" method="post" className="space-y-4">
 							<Label htmlFor="provider">Provider</Label>
 							<Select name="provider" defaultValue={llmConfig?.provider}>
 								<SelectTrigger>

@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.56.0
+        version: 0.56.0
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       '@mlc-ai/web-llm':
         specifier: ^0.2.79
         version: 0.2.79
@@ -50,6 +56,9 @@ importers:
       lucide-react:
         specifier: ^0.503.0
         version: 0.503.0(react@19.1.0)
+      openai:
+        specifier: ^5.8.2
+        version: 5.8.2(ws@8.18.0)(zod@3.25.74)
       quill:
         specifier: ^2.0.3
         version: 2.0.3
@@ -147,6 +156,10 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@anthropic-ai/sdk@0.56.0':
+    resolution: {integrity: sha512-SLCB8M8+VMg1cpCucnA1XWHGWqVSZtIWzmOdDOEu3eTFZMB+A0sGZ1ESO5MHDnqrNTXz3safMrWx9x4rMZSOqA==}
+    hasBin: true
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -831,6 +844,10 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
+    engines: {node: '>=18.0.0'}
 
   '@hattip/adapter-node@0.0.49':
     resolution: {integrity: sha512-BE+Y8Q4U0YcH34FZUYU4DssGKOaZLbNL0zK57Z41UZp0m9kS79ZIolBmjjpPhTVpIlRY3Rs+uhXbVXKk7mUcJA==}
@@ -2838,6 +2855,18 @@ packages:
     resolution: {integrity: sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==}
     engines: {node: '>= 0.8'}
 
+  openai@5.8.2:
+    resolution: {integrity: sha512-8C+nzoHYgyYOXhHGN6r0fcb4SznuEn1R7YZMvlqDbnCuE0FM2mm3T1HiYW6WIcMS/F1Of2up/cSPjLPaWt0X9Q==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
+
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
 
@@ -3621,6 +3650,8 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
+  '@anthropic-ai/sdk@0.56.0': {}
+
   '@babel/code-frame@7.26.2':
     dependencies:
       '@babel/helper-validator-identifier': 7.25.9
@@ -4250,6 +4281,8 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
 
   '@floating-ui/utils@0.2.9': {}
+
+  '@google/generative-ai@0.24.1': {}
 
   '@hattip/adapter-node@0.0.49':
     dependencies:
@@ -6162,6 +6195,11 @@ snapshots:
       ee-first: 1.1.1
 
   on-headers@1.0.2: {}
+
+  openai@5.8.2(ws@8.18.0)(zod@3.25.74):
+    optionalDependencies:
+      ws: 8.18.0
+      zod: 3.25.74
 
   package-json-from-dist@1.0.1: {}
 
