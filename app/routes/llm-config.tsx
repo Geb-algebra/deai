@@ -44,7 +44,7 @@ export function LlmConfig() {
 	const { error } = configFetcher.data ?? { error: null };
 
 	return (
-		<div className="p-4 border rounded-lg bg-card">
+		<div className="p-4 border rounded-2xl bg-card">
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-sm font-medium">Current AI Configuration</h3>
 

@@ -39,21 +39,24 @@ const QuestionerSchema = z.object({
 });
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
-	const llmConfig = await getLlmConfig();
 	const formData = await request.json();
 	const { content, previousQuestions } = QuestionerSchema.parse(formData);
+	const llmConfig = await getLlmConfig();
+	if (!llmConfig.apiKey) {
+		return { questions: previousQuestions, error: "LLM config is not set" };
+	}
 	const question = await generateQuestion(content, previousQuestions, llmConfig);
 	if (!question) {
-		return previousQuestions;
+		return { questions: previousQuestions, error: "Failed to generate question" };
 	}
 	const newQuestions = [...previousQuestions, question].slice(-10);
-	return newQuestions;
+	return { questions: newQuestions, error: null };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
 	const { theme, setTheme } = useTheme();
 	const fetcher = useFetcher<typeof clientAction>();
-	const questions = fetcher.data;
+	const { questions, error } = fetcher.data || { questions: [], error: null };
 	console.log(questions);
 
 	const toggleTheme = () => {
@@ -91,15 +94,17 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 					</ClientOnly>
 				</section>
 
-				<aside className={styles.sidebar}>
+				<aside className={cn(styles.sidebar, "h-full")}>
 					<LlmConfig />
-					<div className="flex flex-col gap-2">
-						{questions?.map((question, index) => (
-							<div key={index}>{question}</div>
+					<div className="flex flex-col gap-2 justify-end">
+						{questions?.map((question) => (
+							<div className="rounded-2xl bg-secondary p-2" key={question}>
+								<p>{question}</p>
+							</div>
 						))}
 						{fetcher.state === "submitting" && <div>Generating...</div>}
 						{fetcher.state === "loading" && <div>Loading...</div>}
-						{fetcher.state === "idle" && <div>Idle</div>}
+						{fetcher.state === "idle" && <div>{error}</div>}
 					</div>
 				</aside>
 			</main>
