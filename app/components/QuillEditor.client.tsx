@@ -6,6 +6,7 @@ import "./QuillEditor.css";
 import styles from "./QuillEditor.module.css";
 
 interface QuillEditorProps {
+	content?: string;
 	placeholder?: string;
 	onContentChange?: (content: string) => void;
 	onIdle?: (content: string) => void;
@@ -14,6 +15,7 @@ interface QuillEditorProps {
 }
 
 export function QuillEditor({
+	content,
 	placeholder = "Start writing your thoughts...",
 	onContentChange,
 	onIdle,
@@ -97,6 +99,12 @@ export function QuillEditor({
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		if (content) {
+			quillRef.current?.setContents(content);
+		}
+	}, [content]);
 
 	return (
 		<div

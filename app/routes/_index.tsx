@@ -3,16 +3,16 @@ import type { Route } from "./+types/_index";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useFetcher } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
-import { z } from "zod";
 import { QuillEditor } from "~/components/QuillEditor.client";
 import { Switch } from "~/components/atoms/switch";
 import { useTheme } from "~/context";
 import { createDefaultLlmConfig } from "~/domains/ai";
 import { getLlmConfig } from "~/domains/ai/repositories";
-import { generateQuestion } from "~/domains/ai/services";
 import { cn } from "~/utils/css";
 import styles from "./_index.module.css";
+import type { clientAction as contentAction } from "./content";
 import { LlmConfig } from "./llm-config";
+import type { clientAction as questionAction } from "./question";
 
 export function meta() {
 	return [
@@ -27,37 +27,19 @@ export function meta() {
 export async function clientLoader() {
 	try {
 		const llmConfig = await getLlmConfig();
-		return llmConfig;
+		const content = localStorage.getItem("content");
+		return { llmConfig, content };
 	} catch (error) {
 		return createDefaultLlmConfig();
 	}
 }
 
-const QuestionerSchema = z.object({
-	content: z.string().min(1, "Content is required"),
-	previousQuestions: z.array(z.string()).optional().default([]),
-});
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	const formData = await request.json();
-	const { content, previousQuestions } = QuestionerSchema.parse(formData);
-	const llmConfig = await getLlmConfig();
-	if (!llmConfig.apiKey) {
-		return { questions: previousQuestions, error: "LLM config is not set" };
-	}
-	const question = await generateQuestion(content, previousQuestions, llmConfig);
-	if (!question) {
-		return { questions: previousQuestions, error: "Failed to generate question" };
-	}
-	const newQuestions = [...previousQuestions, question].slice(-10);
-	return { questions: newQuestions, error: null };
-}
-
 export default function Home({ loaderData }: Route.ComponentProps) {
 	const { theme, setTheme } = useTheme();
-	const fetcher = useFetcher<typeof clientAction>();
-	const { questions, error } = fetcher.data || { questions: [], error: null };
-	console.log(questions);
+	const questionFetcher = useFetcher<typeof questionAction>();
+	const contentFetcher = useFetcher<typeof contentAction>();
+	const { llmConfig, content } = loaderData;
+	const { questions, error } = questionFetcher.data || { questions: [], error: null };
 
 	const toggleTheme = () => {
 		setTheme(theme === "light" ? "dark" : "light");
@@ -83,8 +65,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 						{() => (
 							<QuillEditor
 								placeholder="Start writing your thoughts freely... Use bullet points, paragraphs, or any format that helps you think."
+								onContentChange={(content) => {
+									contentFetcher.submit(
+										{ content },
+										{ method: "post", encType: "application/json" },
+									);
+								}}
 								onIdle={(content) => {
-									fetcher.submit(
+									questionFetcher.submit(
 										{ content, previousQuestions: questions || [] },
 										{ method: "post", encType: "application/json" },
 									);
@@ -102,9 +90,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 								<p>{question}</p>
 							</div>
 						))}
-						{fetcher.state === "submitting" && <div>Generating...</div>}
-						{fetcher.state === "loading" && <div>Loading...</div>}
-						{fetcher.state === "idle" && <div>{error}</div>}
+						{questionFetcher.state === "submitting" && <div>Generating...</div>}
+						{questionFetcher.state === "loading" && <div>Loading...</div>}
+						{questionFetcher.state === "idle" && <div>{error}</div>}
 					</div>
 				</aside>
 			</main>
