@@ -1,4 +1,4 @@
-import { data, useFetcher, useRouteLoaderData } from "react-router";
+import { data, useFetcher } from "react-router";
 import { Button } from "~/components/atoms/button";
 import {
 	Dialog,
@@ -18,10 +18,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/atoms/select";
-import { LlmConfigSchema } from "~/domains/ai";
+import { type LlmConfig, LlmConfigSchema } from "~/domains/ai";
 import { getLlmConfig, setLlmConfig } from "~/domains/ai/repositories";
 import type { Route } from "./+types/llm-config";
-import type { clientLoader } from "./_index";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
 	const llmConfig = await getLlmConfig();
@@ -38,8 +37,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 	}
 }
 
-export function LlmConfig() {
-	const llmConfig = useRouteLoaderData<typeof clientLoader>("routes/_index");
+export function LlmConfigurer({ llmConfig }: { llmConfig: LlmConfig }) {
 	const configFetcher = useFetcher<typeof clientAction>();
 	const { error } = configFetcher.data ?? { error: null };
 

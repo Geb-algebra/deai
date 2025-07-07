@@ -1,15 +1,22 @@
-import Quill from "quill";
+import Quill, { Delta } from "quill";
 import "quill/dist/quill.bubble.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "~/utils/css";
 import "./QuillEditor.css";
 import styles from "./QuillEditor.module.css";
 
+type RecoverableContent = string;
+
+interface QuillContentInfo {
+	content: RecoverableContent;
+	plainText: string;
+}
+
 interface QuillEditorProps {
-	content?: string;
+	content?: RecoverableContent;
 	placeholder?: string;
-	onContentChange?: (content: string) => void;
-	onIdle?: (content: string) => void;
+	onContentChange?: (content: QuillContentInfo) => void;
+	onIdle?: (content: QuillContentInfo) => void;
 	idleTimeout?: number;
 	className?: string;
 }
@@ -19,7 +26,7 @@ export function QuillEditor({
 	placeholder = "Start writing your thoughts...",
 	onContentChange,
 	onIdle,
-	idleTimeout = 5000,
+	idleTimeout = 3000,
 	className = "",
 }: QuillEditorProps) {
 	const editorRef = useRef<HTMLDivElement>(null);
@@ -57,12 +64,12 @@ export function QuillEditor({
 	const handleTextChange = useCallback(() => {
 		if (!quillRef.current) return;
 
-		const content = quillRef.current.root.innerHTML;
+		const content = JSON.stringify(quillRef.current.getContents());
 		const plainText = quillRef.current.getText().trim();
 
 		// Call content change callback
 		if (onContentChange) {
-			onContentChange(content);
+			onContentChange({ content, plainText });
 		}
 
 		// Clear existing idle timer
@@ -73,7 +80,7 @@ export function QuillEditor({
 		// Set new idle timer if there's content
 		if (plainText && onIdle) {
 			idleTimerRef.current = setTimeout(() => {
-				onIdle(content);
+				onIdle({ content, plainText });
 			}, idleTimeout);
 		}
 	}, [onContentChange, onIdle, idleTimeout]);
@@ -102,7 +109,14 @@ export function QuillEditor({
 
 	useEffect(() => {
 		if (content) {
-			quillRef.current?.setContents(content);
+			const newContent = new Delta(JSON.parse(content));
+			const currentContent = quillRef.current?.getContents();
+			if (currentContent) {
+				const diff = currentContent.diff(newContent);
+				quillRef.current?.updateContents(diff);
+			} else {
+				quillRef.current?.setContents(newContent);
+			}
 		}
 	}, [content]);
 

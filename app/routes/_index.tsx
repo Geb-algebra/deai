@@ -11,7 +11,7 @@ import { getLlmConfig } from "~/domains/ai/repositories";
 import { cn } from "~/utils/css";
 import styles from "./_index.module.css";
 import type { clientAction as contentAction } from "./content";
-import { LlmConfig } from "./llm-config";
+import { LlmConfigurer } from "./llm-config";
 import type { clientAction as questionAction } from "./question";
 
 export function meta() {
@@ -25,12 +25,12 @@ export function meta() {
 }
 
 export async function clientLoader() {
+	const content = localStorage.getItem("content") || "[]";
 	try {
 		const llmConfig = await getLlmConfig();
-		const content = localStorage.getItem("content");
 		return { llmConfig, content };
 	} catch (error) {
-		return createDefaultLlmConfig();
+		return { llmConfig: createDefaultLlmConfig(), content };
 	}
 }
 
@@ -38,7 +38,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 	const { theme, setTheme } = useTheme();
 	const questionFetcher = useFetcher<typeof questionAction>();
 	const contentFetcher = useFetcher<typeof contentAction>();
-	const { llmConfig, content } = loaderData;
+	const { content, llmConfig } = loaderData;
 	const { questions, error } = questionFetcher.data || { questions: [], error: null };
 
 	const toggleTheme = () => {
@@ -64,17 +64,22 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 					<ClientOnly fallback={<div className={styles.quillSkeleton} />}>
 						{() => (
 							<QuillEditor
+								content={content}
 								placeholder="Start writing your thoughts freely... Use bullet points, paragraphs, or any format that helps you think."
-								onContentChange={(content) => {
+								onContentChange={({ content }) => {
 									contentFetcher.submit(
 										{ content },
-										{ method: "post", encType: "application/json" },
+										{
+											method: "post",
+											action: "/content",
+											encType: "application/json",
+										},
 									);
 								}}
-								onIdle={(content) => {
+								onIdle={({ plainText }) => {
 									questionFetcher.submit(
-										{ content, previousQuestions: questions || [] },
-										{ method: "post", encType: "application/json" },
+										{ content: plainText, previousQuestions: questions || [] },
+										{ method: "post", action: "/question", encType: "application/json" },
 									);
 								}}
 							/>
@@ -83,7 +88,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 				</section>
 
 				<aside className={cn(styles.sidebar, "h-full")}>
-					<LlmConfig />
+					<LlmConfigurer llmConfig={llmConfig} />
 					<div className="flex flex-col gap-2 justify-end">
 						{questions?.map((question) => (
 							<div className="rounded-2xl bg-secondary p-2" key={question}>
