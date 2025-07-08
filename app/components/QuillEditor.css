@@ -1,20 +1,18 @@
 /* Quill editor base styles */
 .ql-editor {
-	font-size: 20px;
+	font-size: 1rem;
 	line-height: 1.7;
 	padding: 32px;
 	height: 100%;
 	max-height: 100%;
 	overflow-y: auto;
 	width: 100%;
-	background-color: var(--card);
-	border-radius: 2rem;
 }
 
 .ql-editor.ql-blank::before {
 	font-style: normal;
 	color: var(--muted-foreground);
-	font-size: 20px;
+	font-size: 1rem;
 	margin-left: 1rem;
 }
 
@@ -65,37 +63,4 @@
 /* Quill editor focus states */
 .ql-editor:focus {
 	outline: none;
-}
-
-/* Responsive design for Quill editor */
-@media (max-width: 1024px) {
-	.ql-editor {
-		padding: 24px;
-		min-height: 400px;
-		font-size: 18px;
-	}
-}
-
-@media (max-width: 768px) {
-	.ql-editor {
-		padding: 20px;
-		min-height: 300px;
-		font-size: 16px;
-	}
-
-	.ql-editor h1 {
-		font-size: 2rem;
-	}
-
-	.ql-editor h2 {
-		font-size: 1.75rem;
-	}
-
-	.ql-editor h3 {
-		font-size: 1.5rem;
-	}
-
-	.ql-editor h4 {
-		font-size: 1.25rem;
-	}
 }

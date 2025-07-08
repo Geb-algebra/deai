@@ -58,9 +58,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 			</header>
 
 			{/* Main content */}
-			<main className={cn("container mx-auto p-6 h-full", styles.main)}>
+			<main
+				className={cn("mx-auto p-6 h-full w-full max-w-screen-xl overflow-y-hidden", styles.main)}
+			>
 				{/* Editor section */}
-				<section className="mb-8 h-full">
+				<section className="mb-8 h-full w-full overflow-y-hidden">
 					<ClientOnly fallback={<div className={styles.quillSkeleton} />}>
 						{() => (
 							<QuillEditor

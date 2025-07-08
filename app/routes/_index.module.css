@@ -5,7 +5,7 @@
 
 .main {
 	display: grid;
-	grid-template-columns: 1fr 384px;
+	grid-template-columns: 1fr 320px;
 	grid-template-areas: "editor sidebar";
 	gap: 2rem;
 }
