@@ -67,7 +67,6 @@ deai/
 │   │   └── ai/            # AI integration domain
 │   ├── components/        # Reusable UI components
 │   ├── routes/            # React Router pages
-│   ├── workers/           # Web Worker for AI
 │   └── utils/             # Utility functions
 ├── .ai/                   # Memory bank and rules
 └── docs/                  # ADRs and other documents
@@ -109,7 +108,7 @@ deai/
 ```json
 {
   "react": "^18.0.0",
-  "react-router": "^7.0.0",
+  "react-router": "latest",
   "react-dom": "^18.0.0",
   "typescript": "^5.0.0",
   "vite": "^5.0.0",
@@ -122,9 +121,7 @@ deai/
 ```json
 {
   "tailwindcss": "^3.0.0",
-  "@tiptap/react": "^2.0.0",
-  "@tiptap/pm": "^2.0.0",
-  "@tiptap/starter-kit": "^2.0.0",
+  "quill": "^2.0.2",
   "class-variance-authority": "^0.7.0",
   "clsx": "^2.0.0",
   "tailwind-merge": "^2.0.0"
@@ -134,9 +131,9 @@ deai/
 ### AI Dependencies
 ```json
 {
-  "openai": "^4.20.0",
-  "@anthropic-ai/sdk": "^0.18.0",
-  "@google/generative-ai": "^0.1.0"
+  "openai": "^4.52.7",
+  "@anthropic-ai/sdk": "^0.22.0",
+  "@google/generative-ai": "^0.15.0"
 }
 ```
 
@@ -146,10 +143,7 @@ deai/
 {
   "zod": "^3.0.0",
   "drizzle-orm": "^0.29.0",
-  "drizzle-kit": "^0.20.0",
-  "openai": "^4.20.0",
-  "@anthropic-ai/sdk": "^0.18.0",
-  "@google/generative-ai": "^0.1.0"
+  "drizzle-kit": "^0.20.0"
 }
 ```
 
@@ -158,8 +152,7 @@ deai/
 ```json
 {
   "hono": "^3.0.0",
-  "@hono/node-server": "^1.0.0",
-  "openai": "^4.0.0"
+  "@hono/node-server": "^1.0.0"
 }
 ```
 

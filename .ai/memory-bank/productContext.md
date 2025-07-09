@@ -23,8 +23,8 @@ The Thought-Expanding AI Assist Editor addresses a fundamental gap in digital th
 ### Core Experience Flow
 
 1. **Free Writing Phase**: User writes thoughts naturally in a distraction-free WYSIWYG editor
-2. **AI Analysis**: After 5 seconds of inactivity, AI analyzes the content for gaps and blind spots
-3. **Question Generation**: AI generates 3 thought-provoking questions using proven frameworks
+2. **AI Analysis**: After 3 seconds of inactivity, AI analyzes the content for gaps and blind spots
+3. **Question Generation**: AI generates a thought-provoking question
 4. **Iterative Deepening**: User responds to questions, triggering new analysis cycles
 5. **Continuous Expansion**: Process continues until user decides to stop
 

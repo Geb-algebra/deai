@@ -186,8 +186,8 @@ Every project should follow the manners of domain driven design. Specifically,
 - Domain objects should be implemented, as a type in `models.ts` file in the domain directory. These objects must be defined with pure typescript, without relying on any libraries like zod or drizzle. Generally they should be just a type, not a class with constructors or methods, to avoid they mutate themselves, but sometimes it is not the case.
 - For each domain object, a Factory class should be defined. This class ensures that the domain objects will be created with right type, right default value
 - For each domain object, a Repository class, which fetch domain objects of a specific kind from and save them to storages, should be implemented. This class have no properties and only have static methods such as `get` and `save`. This class just pass objects as they are and must not have any business logic.
-- All business logics should be implemented as Services, pure functions defined in `services.ts` in the domain directory. Services must not have states and must not mutate arguments. Generally Services accept a domain object as an argument and return updated version of it. When doing this, services have to return an updated copy of the accepted object instead of mutate it. Services never use Repositories that means that they don’t touch storage at all. Getting objects from storage and saving it is done outside Services. All services should be tested by unit tests.
-- Route components can’t use Services and can’t include any other business logics. Instead, `loader, action, clientLoader` and `clientAction` use Repositories and Services to pass domain objects that Route components requested and mutate domain objects as Route components  requested. Route components can just render domain objects they get and send the request to run some services, often with user inputs.
+- All business logics should be implemented as Services, pure functions defined in `services.ts` in the domain directory. Services must not have states and must not mutate arguments. Generally Services accept a domain object as an argument and return updated version of it. When doing this, services have to return an updated copy of the accepted object instead of mutate it. Services never use Repositories that means that they don't touch storage at all. Getting objects from storage and saving it is done outside Services. All services should be tested by unit tests.
+- Route components can't use Services and can't include any other business logics. Instead, `loader, action, clientLoader` and `clientAction` use Repositories and Services to pass domain objects that Route components requested and mutate domain objects as Route components  requested. Route components can just render domain objects they get and send the request to run some services, often with user inputs.
 - Each component used in Route components should have entire responsibility to the domain objects they render. Specifically, they accept a set of domain objects they render and send requests for mutating them directly to action functions.
 
 Only the operator can add, update and delete Domain objects. You should not do that.
@@ -238,15 +238,16 @@ export async function action({ request }: Route.ActionArgs) {
 }
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   // ...
-  return { say: "hello" };
+  return { say: "hello from client" };
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   try {
     // do some mutations according to request
-    return { error: null };
+    return { ok: true, error: null };
   } catch (e) {
-    return { error: "some error" };
+    const message = e instanceof Error ? e.message : "Unknown error";
+    return { ok: false, error: message };
   }
 }
 
@@ -318,3 +319,35 @@ Dont read these files:
 - ./+types/*
 - .env
 - .dev.vars
+
+### Resource Routes
+
+For actions that don't have a UI, like deleting an item from a list, use a "Resource Route". This is a route module that only exports an `action` or `clientAction`.
+
+- **Naming**: Name the file after the resource it manages (e.g., `app/routes/items.tsx`). The specific action is determined by the HTTP method (`POST`, `DELETE`, etc.).
+- **Functionality**: The exported action handles the server-side logic (e.g., deleting from a database or, in our case, `localStorage`).
+- **Invocation**: Use `useFetcher` from the UI component to call the action without a navigation. The `fetcher.Form` should specify the `method` (e.g., `DELETE`, `POST`) and the `action` (the path to the resource route).
+
+**Example: Clearing Question History**
+
+1.  **Resource Route (`app/routes/question.tsx`):**
+    The `clientAction` checks for the `DELETE` method.
+
+    ```tsx
+    export async function clientAction({ request }: Route.ClientActionArgs) {
+      if (request.method === "DELETE") {
+        localStorage.removeItem("previousQuestions");
+        return { questions: [], error: null };
+      }
+      // ... existing POST logic
+    }
+    ```
+
+2.  **UI Component (`app/routes/_index.tsx`):**
+    A `fetcher.Form` is used to submit a `DELETE` request to the `/question` route.
+
+    ```tsx
+    <questionFetcher.Form method="delete" action="/question">
+        <Button type="submit">Clear History</Button>
+    </questionFetcher.Form>
+    ```

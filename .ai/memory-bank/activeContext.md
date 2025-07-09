@@ -2,78 +2,68 @@
 
 ## Current Work Focus
 
-### Project Status: Pivoting to Multi-Provider BYOK Architecture
+### Project Status: Core Feature Implementation Complete
 
-The project is undergoing a strategic pivot away from a client-side WebLLM implementation to a more flexible and powerful "Bring Your Own Key" (BYOK) model. The core goal is to allow users to connect directly to multiple high-quality LLM providers (OpenAI, Anthropic, Google) from their browser.
+The project has successfully pivoted to a multi-provider "Bring Your Own Key" (BYOK) model. The core features, including API key management, question generation, and question history management (including clearing history), are now fully implemented.
 
-This decision, documented in [ADR-0003](./../docs/adr/0003-use-byok-for-llm-integration.md) and [ADR-0004](./../docs/adr/0004-multi-provider-byok-llm-integration.md), prioritizes model quality and user flexibility while maintaining a strong commitment to privacy by keeping all user data and keys on the client-side.
+The current focus is on testing, polishing the user experience, and addressing potential challenges around API differences and error handling.
 
 ## Recent Changes
 
-### Architectural Pivot (Current Session)
-- **Decision**: Deprecated the WebLLM architecture due to performance and quality concerns.
-- **New Strategy**: Adopted a multi-provider BYOK strategy.
-- **Documentation**: Updated `systemPatterns.md` and `techContext.md` to reflect the new architecture. Created ADR-0004 to document the technical plan for the multi-provider implementation.
+### Core Feature Implementation (Completed)
+- **BYOK Architecture**: Implemented the full client-side BYOK flow.
+- **Resource Routes**: Created resource routes for handling LLM configuration and question-related actions (`/llm-config`, `/question`).
+- **Question History**: Implemented question generation (`POST /question`) and clearing (`DELETE /question`).
+- **UI Components**: Built `LlmConfigurer` and integrated it into the main page.
+- **State Management**: Solidified the use of `clientLoader` and `useFetcher` for all client-side data management.
 
 ## Next Steps
 
-### Immediate Next Steps (Implementation Plan)
+### Immediate Next Steps (Testing & Polish)
 
-1.  **Dependencies**
-    - [ ] Install `openai`, `@anthropic-ai/sdk`, and `@google/generative-ai` packages.
-2.  **Domain Implementation**
-    - [ ] Define a common `LLMClient` interface in `app/domains/ai/models.ts`.
-    - [ ] Implement `OpenAIClient`, `ClaudeClient`, and `GeminiClient`, each conforming to the `LLMClient` interface.
-    - [ ] Create the `AIFactory` to dynamically instantiate the correct client.
-3.  **Client-Side Data Management**
-    - [ ] Implement the `clientLoader` in `app/routes/_index.tsx` to read API keys from `localStorage`.
-    - [ ] Implement the `clientAction` in `app/routes/_index.tsx` to save API keys to `localStorage`.
-4.  **UI Implementation**
-    - [ ] Create the `ApiKeyModal.tsx` component with a `<fetcher.Form>` managed by `useFetcher`.
-    - [ ] Add a provider selection UI to the main page.
-    - [ ] Connect the UI to the `clientLoader` data and the `clientAction`.
-5.  **Integration**
-    - [ ] Wire the main component to trigger the AI completion flow using the factory and the selected client.
-    - [ ] Handle the streamed response and display it in `SimpleQuestionDisplay.tsx`.
-6.  **Cleanup**
-    - [ ] Remove all obsolete WebLLM files (`webllm-client.ts`, `webllm-worker.ts`, etc.).
-    - [ ] Uninstall the `@mlc-ai/web-llm` package.
+1.  **Testing**
+    - [ ] Write unit tests for the `AIFactory` and each `LLMClient`.
+    - [ ] Write integration tests covering the full user flow:
+        - Configuring an API key.
+        - Generating a question.
+        - Clearing the question history.
+2.  **UX Polish**
+    - [ ] Implement robust and user-friendly error handling for API calls.
+    - [ ] Refine loading states to provide better feedback to the user.
+3.  **Feature Enhancement**
+    - [ ] Allow users to select specific models from a provider (e.g., GPT-4 vs. GPT-3.5).
 
 ## Active Decisions and Considerations
 
 ### Technical Decisions Made
 
 1.  **AI Integration Strategy**: Multi-Provider "Bring Your Own Key" (BYOK).
-    - **Reasoning**: Maximizes model quality and user flexibility while ensuring privacy. See ADR-0003.
-2.  **Architecture**: Direct client-to-provider API calls.
-    - **Reasoning**: Avoids server infrastructure costs and complexity. All data remains in the user's browser.
-3.  **API Key Management**: Remix `clientLoader`/`clientAction` with `localStorage`.
-    - **Reasoning**: Aligns with framework best practices for client-side state, ensuring a robust and maintainable implementation. See ADR-0004.
-4.  **Modal Interactions**: `useFetcher` for the API key modal.
-    - **Reasoning**: Provides a seamless UX for submitting data without a full page navigation.
+    - **Reasoning**: Maximizes model quality and user flexibility while ensuring privacy.
+2.  **Architecture**: Direct client-to-provider API calls using Resource Routes.
+    - **Reasoning**: Avoids server infrastructure costs and provides a clean separation of concerns.
+3.  **Data Management**: Remix `clientLoader`/`clientAction` with `localStorage`.
+    - **Reasoning**: Aligns with framework best practices for robust client-side state.
+4.  **Form Submissions**: `useFetcher` for all form interactions.
+    - **Reasoning**: Provides a seamless UX without full page navigations.
 
 ### Open Questions
 
-1.  **Error Handling**: How should we unify and display errors from different provider APIs (e.g., invalid key, rate limits, model errors)?
-2.  **Model Selection**: Should we allow users to select specific models within a provider (e.g., GPT-4 vs. GPT-3.5)?
-3.  **Key Encryption**: Should we consider client-side encryption for keys stored in `localStorage` as a future enhancement?
+1.  **Unified Error Handling**: What is the best strategy to normalize and display errors from different provider APIs (e.g., invalid key, rate limits, model errors) in a consistent UI?
+2.  **Model Selection UI**: How should the UI be designed to allow users to select models within a provider without cluttering the interface?
+3.  **Key Encryption**: Should we add an optional layer of client-side encryption for API keys stored in `localStorage` for enhanced security?
 
 ## Work Context
 
 ### Current Session Focus
-- Quill editor implementation completed
-- CSS organization pattern established
-- Ready to continue with AI integration and question display
+- Core feature development is complete.
+- The immediate focus is now on writing comprehensive tests.
 
 ### Key Principles to Follow
-- Domain-driven design approach
-- Clean separation of concerns
-- Comprehensive testing strategy
-- Operator review at each stage
-- Follow established CSS organization patterns
+- Domain-driven design approach.
+- Clean separation of concerns.
+- Comprehensive testing strategy.
 
 ### Success Criteria
-- ✅ Quill editor component implemented with proper styling
-- ✅ CSS organization pattern documented
-- 🚧 AI integration and question display (next)
-- 🚧 Complete user flow implementation 
+- ✅ Core BYOK functionality is implemented and working.
+- 🚧 All new logic is covered by unit and integration tests.
+- 🚧 The user experience for both success and error states is polished. 
