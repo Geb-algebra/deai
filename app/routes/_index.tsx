@@ -91,10 +91,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 				<aside className={cn(styles.sidebar, "h-full")}>
 					<LlmConfigurer llmConfig={llmConfig} />
-					<div className="flex flex-col gap-2 justify-end">
+					<div className="flex flex-col gap-2 justify-end overflow-y-auto">
 						{questions?.map((question) => (
-							<div className="rounded-2xl bg-secondary p-2" key={question}>
-								<p>{question}</p>
+							<div className="rounded-2xl bg-secondary p-3" key={question}>
+								<p className="text-sm">{question}</p>
 							</div>
 						))}
 						{questionFetcher.state === "submitting" && <div>Generating...</div>}
