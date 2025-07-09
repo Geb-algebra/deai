@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { data, useFetcher } from "react-router";
 import { Button } from "~/components/atoms/button";
 import {
@@ -18,15 +19,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/atoms/select";
-import { type LlmConfig, LlmConfigSchema } from "~/domains/ai";
-import { getLlmConfig, setLlmConfig } from "~/domains/ai/repositories";
+import { type LlmConfig, LlmConfigSchema, type ModelProvider } from "~/domains/ai";
+import { AI_MODELS } from "~/domains/ai/constants";
+import { setLlmConfig } from "~/domains/ai/repositories";
 import type { Route } from "./+types/llm-config";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
-	const llmConfig = await getLlmConfig();
-	if (llmConfig.apiKey === "") {
-		return data({ error: "LLM config is not set" }, { status: 400 });
-	}
 	const formData = await request.formData();
 	try {
 		const llmConfig = LlmConfigSchema.parse(Object.fromEntries(formData));
@@ -40,6 +38,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 export function LlmConfigurer({ llmConfig }: { llmConfig: LlmConfig }) {
 	const configFetcher = useFetcher<typeof clientAction>();
 	const { error } = configFetcher.data ?? { error: null };
+	const [provider, setProvider] = useState<ModelProvider>(llmConfig?.provider ?? "gemini");
 
 	return (
 		<div className="p-4 border rounded-2xl bg-card">
@@ -62,14 +61,31 @@ export function LlmConfigurer({ llmConfig }: { llmConfig: LlmConfig }) {
 
 						<configFetcher.Form action="/llm-config" method="post" className="space-y-4">
 							<Label htmlFor="provider">Provider</Label>
-							<Select name="provider" defaultValue={llmConfig?.provider}>
-								<SelectTrigger>
+							<Select
+								name="provider"
+								defaultValue={llmConfig?.provider}
+								onValueChange={(value) => setProvider(value as ModelProvider)}
+							>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Select a provider" />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className="w-full">
 									<SelectItem value="gemini">Gemini</SelectItem>
 									<SelectItem value="openai">OpenAI</SelectItem>
 									<SelectItem value="claude">Claude</SelectItem>
+								</SelectContent>
+							</Select>
+							<Label htmlFor="model">Model</Label>
+							<Select name="model" defaultValue={llmConfig?.model}>
+								<SelectTrigger className="w-full">
+									<SelectValue placeholder="Select a model" />
+								</SelectTrigger>
+								<SelectContent className="w-full">
+									{AI_MODELS[provider].map((model) => (
+										<SelectItem key={model} value={model}>
+											{model}
+										</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 							<Label htmlFor="apiKey">API Key</Label>
@@ -86,6 +102,10 @@ export function LlmConfigurer({ llmConfig }: { llmConfig: LlmConfig }) {
 				<div className="flex justify-between">
 					<span>Provider:</span>
 					<span className="capitalize">{llmConfig?.provider}</span>
+				</div>
+				<div className="flex justify-between">
+					<span>Model:</span>
+					<span className="capitalize">{llmConfig?.model}</span>
 				</div>
 				<div className="flex justify-between">
 					<span>API Key:</span>

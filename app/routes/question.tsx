@@ -15,7 +15,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 	if (!llmConfig.apiKey) {
 		return { questions: previousQuestions, error: "LLM config is not set" };
 	}
-	const question = await generateQuestion(content, previousQuestions, llmConfig);
+	const question = await generateQuestion(content, llmConfig, previousQuestions);
 	if (!question) {
 		return { questions: previousQuestions, error: "Failed to generate question" };
 	}

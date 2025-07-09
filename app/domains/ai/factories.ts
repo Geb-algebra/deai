@@ -1,3 +1,4 @@
+import { AI_MODELS } from "./constants";
 import type { AIRequest, AIResponse, LlmConfig } from "./models";
 
 // Factory for creating AIRequest objects
@@ -26,5 +27,6 @@ export function createDefaultLlmConfig(): LlmConfig {
 	return {
 		provider: "gemini",
 		apiKey: "",
+		model: AI_MODELS.gemini[0],
 	};
 }

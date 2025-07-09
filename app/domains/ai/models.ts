@@ -20,6 +20,7 @@ export type ModelProvider = "gemini" | "openai" | "claude";
 export const LlmConfigSchema = z.object({
 	provider: z.enum(["gemini", "openai", "claude"]),
 	apiKey: z.string().min(1, "API key is required"),
+	model: z.string().min(1, "Model is required"),
 });
 
 export type LlmConfig = z.infer<typeof LlmConfigSchema>;

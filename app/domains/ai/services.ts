@@ -43,53 +43,53 @@ export function buildPrompt(content: string, previousQuestions: string[] = []) {
 
 export async function generateQuestion(
 	content: string,
-	previousQuestions: string[] = [],
 	llmConfig: LlmConfig,
+	previousQuestions: string[] = [],
 ) {
 	if (llmConfig.apiKey === "") {
 		throw new Error("LLM config is not set");
 	}
 	switch (llmConfig.provider) {
 		case "openai":
-			return generateQuestionWithOpenAI(buildPrompt(content, previousQuestions), llmConfig.apiKey);
+			return generateQuestionWithOpenAI(buildPrompt(content, previousQuestions), llmConfig);
 		case "gemini":
-			return generateQuestionWithGemini(buildPrompt(content, previousQuestions), llmConfig.apiKey);
+			return generateQuestionWithGemini(buildPrompt(content, previousQuestions), llmConfig);
 		case "claude":
-			return generateQuestionWithClaude(buildPrompt(content, previousQuestions), llmConfig.apiKey);
+			return generateQuestionWithClaude(buildPrompt(content, previousQuestions), llmConfig);
 		default:
 			throw new Error("Unsupported LLM provider");
 	}
 }
 
-export async function generateQuestionWithOpenAI(content: string, apiKey: string) {
+export async function generateQuestionWithOpenAI(content: string, llmConfig: LlmConfig) {
 	const openai = new OpenAI({
-		apiKey,
+		apiKey: llmConfig.apiKey,
 		dangerouslyAllowBrowser: true,
 	});
 	const response = await openai.chat.completions.create({
-		model: "gpt-4o",
+		model: llmConfig.model,
 		messages: [{ role: "user", content }],
 	});
 
 	return response.choices[0].message.content;
 }
 
-export async function generateQuestionWithGemini(content: string, apiKey: string) {
-	const gemini = new GoogleGenerativeAI(apiKey);
+export async function generateQuestionWithGemini(content: string, llmConfig: LlmConfig) {
+	const gemini = new GoogleGenerativeAI(llmConfig.apiKey);
 	const model = gemini.getGenerativeModel({
-		model: "gemini-2.5-flash",
+		model: llmConfig.model,
 	});
 	const response = await model.generateContent(content);
 	return response.response.text();
 }
 
-export async function generateQuestionWithClaude(content: string, apiKey: string) {
+export async function generateQuestionWithClaude(content: string, llmConfig: LlmConfig) {
 	const claude = new Anthropic({
-		apiKey,
+		apiKey: llmConfig.apiKey,
 		dangerouslyAllowBrowser: true,
 	});
 	const response = await claude.messages.create({
-		model: "claude-sonnet-4-20250514",
+		model: llmConfig.model,
 		messages: [{ role: "user", content }],
 		max_tokens: 1000,
 	});
