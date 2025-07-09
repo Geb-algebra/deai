@@ -1,7 +1,11 @@
+import { ClipboardCopy } from "lucide-react";
 import Quill, { Delta } from "quill";
 import "quill/dist/quill.bubble.css";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { copyQuillContentAsMarkdown } from "~/components/services";
 import { cn } from "~/utils/css";
+import { Button } from "./atoms/Button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./atoms/tooltip";
 import "./QuillEditor.css";
 
 type RecoverableContent = string;
@@ -32,6 +36,10 @@ export function QuillEditor({
 	const quillRef = useRef<Quill | null>(null);
 	const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
 	const [isReady, setIsReady] = useState(false);
+
+	const handleCopyAsMarkdown = useCallback(() => {
+		copyQuillContentAsMarkdown(quillRef.current);
+	}, []);
 
 	// Initialize Quill editor
 	useEffect(() => {
@@ -122,11 +130,28 @@ export function QuillEditor({
 	return (
 		<div
 			className={cn(
-				"bg-card h-full w-full rounded-2xl border border-border overflow-y-hidden",
+				"bg-card h-full w-full rounded-2xl border border-border overflow-y-hidden relative",
 				className,
 			)}
 		>
 			<div ref={editorRef} className={cn("h-full w-full overflow-y-hidden")} />
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							variant="outline"
+							size="icon"
+							className="absolute top-2 right-2"
+							onClick={handleCopyAsMarkdown}
+						>
+							<ClipboardCopy className="h-4 w-4" />
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Copy as Markdown</p>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
 		</div>
 	);
 }

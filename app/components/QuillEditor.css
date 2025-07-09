@@ -62,19 +62,19 @@
 
 /* without :not(.ql-direction-rtl) these styles won't be applied because of the low specificity   */
 .ql-editor li.ql-indent-1:not(.ql-direction-rtl) {
-	padding-left: 1.5rem;
-}
-.ql-editor li.ql-indent-2:not(.ql-direction-rtl) {
 	padding-left: 3rem;
 }
-.ql-editor li.ql-indent-3:not(.ql-direction-rtl) {
+.ql-editor li.ql-indent-2:not(.ql-direction-rtl) {
 	padding-left: 4.5rem;
 }
-.ql-editor li.ql-indent-4:not(.ql-direction-rtl) {
+.ql-editor li.ql-indent-3:not(.ql-direction-rtl) {
 	padding-left: 6rem;
 }
-.ql-editor li.ql-indent-5:not(.ql-direction-rtl) {
+.ql-editor li.ql-indent-4:not(.ql-direction-rtl) {
 	padding-left: 7.5rem;
+}
+.ql-editor li.ql-indent-5:not(.ql-direction-rtl) {
+	padding-left: 9rem;
 }
 
 /* Quill editor focus states */

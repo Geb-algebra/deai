@@ -26,8 +26,10 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-switch": "^1.2.2",
+    "@radix-ui/react-tooltip": "^1.2.7",
     "@react-router/node": "^7.5.1",
     "@react-router/serve": "^7.5.1",
+    "@types/turndown": "^5.0.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "hono": "^4.7.7",
@@ -41,6 +43,7 @@
     "remix-utils": "^8.7.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
+    "turndown": "^7.2.0",
     "zod": "^3.25.74"
   },
   "devDependencies": {
