@@ -26,11 +26,13 @@ export function meta() {
 
 export async function clientLoader() {
 	const content = localStorage.getItem("content") || "[]";
+	const savedQuestions = localStorage.getItem("previousQuestions");
+	const questions = savedQuestions ? JSON.parse(savedQuestions) : [];
 	try {
 		const llmConfig = await getLlmConfig();
-		return { llmConfig, content };
+		return { llmConfig, content, questions };
 	} catch (error) {
-		return { llmConfig: createDefaultLlmConfig(), content };
+		return { llmConfig: createDefaultLlmConfig(), content, questions };
 	}
 }
 
@@ -38,8 +40,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 	const { theme, setTheme } = useTheme();
 	const questionFetcher = useFetcher<typeof questionAction>();
 	const contentFetcher = useFetcher<typeof contentAction>();
-	const { content, llmConfig } = loaderData;
-	const { questions, error } = questionFetcher.data || { questions: [], error: null };
+	const { content, llmConfig, questions: initialQuestions } = loaderData;
+	const { questions, error } = questionFetcher.data || {
+		questions: initialQuestions,
+		error: null,
+	};
 
 	const toggleTheme = () => {
 		setTheme(theme === "light" ? "dark" : "light");
@@ -59,10 +64,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 			{/* Main content */}
 			<main
-				className={cn("mx-auto p-6 h-full w-full max-w-screen-xl overflow-y-hidden", styles.main)}
+				className={cn("mx-auto p-6 h-full w-full max-w-screen-xl overflow-y-auto", styles.main)}
 			>
 				{/* Editor section */}
-				<section className="mb-8 h-full w-full overflow-y-hidden">
+				<section className="mb-8 h-full w-full overflow-y-auto">
 					<ClientOnly fallback={<div className={styles.quillSkeleton} />}>
 						{() => (
 							<QuillEditor
@@ -89,9 +94,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 					</ClientOnly>
 				</section>
 
-				<aside className={cn(styles.sidebar, "h-full")}>
+				<aside className={cn(styles.sidebar, "h-full overflow-y-auto")}>
 					<LlmConfigurer llmConfig={llmConfig} />
-					<div className="flex flex-col gap-2 justify-end overflow-y-auto">
+					<div className="flex flex-col gap-2 overflow-y-scroll justify-end-safe">
 						{questions?.map((question) => (
 							<div className="rounded-2xl bg-secondary p-3" key={question}>
 								<p className="text-sm">{question}</p>

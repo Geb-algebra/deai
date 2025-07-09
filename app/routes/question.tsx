@@ -20,5 +20,6 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 		return { questions: previousQuestions, error: "Failed to generate question" };
 	}
 	const newQuestions = [...previousQuestions, question].slice(-10);
+	localStorage.setItem("previousQuestions", JSON.stringify(newQuestions));
 	return { questions: newQuestions, error: null };
 }
