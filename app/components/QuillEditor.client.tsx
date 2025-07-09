@@ -139,7 +139,7 @@ export function QuillEditor({
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Button
-							variant="outline"
+							variant="ghost"
 							size="icon"
 							className="absolute top-2 right-2"
 							onClick={handleCopyAsMarkdown}

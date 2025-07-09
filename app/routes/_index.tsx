@@ -1,9 +1,10 @@
 import type { Route } from "./+types/_index";
 
-import { MoonIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SunIcon, Trash2 } from "lucide-react";
 import { useFetcher } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import { QuillEditor } from "~/components/QuillEditor.client";
+import { Button } from "~/components/atoms/Button";
 import { Switch } from "~/components/atoms/switch";
 import { useTheme } from "~/context";
 import { createDefaultLlmConfig } from "~/domains/ai";
@@ -96,8 +97,23 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 				<aside className={cn(styles.sidebar, "h-full overflow-y-auto")}>
 					<LlmConfigurer llmConfig={llmConfig} />
+					<questionFetcher.Form
+						className="flex items-center justify-between p-1"
+						method="delete"
+						action="/question"
+					>
+						<h2 className="text-sm font-semibold">AI Generated Questions</h2>
+						<Button
+							variant="ghost"
+							size="icon"
+							type="submit"
+							disabled={!questions || questions.length === 0 || questionFetcher.state !== "idle"}
+						>
+							<Trash2 />
+						</Button>
+					</questionFetcher.Form>
 					<div className="flex flex-col gap-2 overflow-y-scroll justify-end-safe">
-						{questions?.map((question) => (
+						{questions?.map((question: string) => (
 							<div className="rounded-2xl bg-secondary p-3" key={question}>
 								<p className="text-sm">{question}</p>
 							</div>

@@ -9,6 +9,11 @@ const QuestionerSchema = z.object({
 });
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
+	if (request.method === "DELETE") {
+		localStorage.removeItem("previousQuestions");
+		return { questions: [], error: null };
+	}
+
 	const formData = await request.json();
 	const { content, previousQuestions } = QuestionerSchema.parse(formData);
 	const llmConfig = await getLlmConfig();
