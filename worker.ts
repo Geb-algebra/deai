@@ -1,8 +1,17 @@
 // worker.ts
-import handle from "hono-react-router-adapter/cloudflare-workers";
+import { createRequestHandler } from "react-router";
 import server from "./app/server";
 
-// @ts-ignore
-import * as build from "virtual:react-router/server-build";
+const build = await import("virtual:react-router/server-build");
+const requestHandler = createRequestHandler(build, import.meta.env.MODE)
 
-export default handle(build, server);
+server.get("*", (c) => requestHandler(c.req.raw, {
+  cloudflare: {
+    env: c.env,
+    ctx: Object.assign(c.executionCtx, { props: undefined }),
+  },
+}));
+
+export default {
+  fetch: server.fetch,
+}

@@ -8,3 +8,4 @@ worker-configuration.d.ts
 # React Router
 /.react-router/
 /build/
+/dist/
