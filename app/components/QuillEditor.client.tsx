@@ -45,7 +45,7 @@ export function QuillEditor({
 					matchVisual: false,
 				},
 			},
-			formats: ["header", "bold", "italic", "underline", "list", "bullet"],
+			formats: ["header", "bold", "italic", "underline", "list", "bullet", "indent"],
 		});
 
 		quillRef.current = quill;
