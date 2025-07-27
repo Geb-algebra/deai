@@ -4,12 +4,12 @@ import { MoonIcon, SunIcon, Trash2 } from "lucide-react";
 import { useFetcher } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import { QuillEditor } from "~/components/QuillEditor.client";
-import { Button } from "~/components/atoms/Button";
-import { Switch } from "~/components/atoms/switch";
+import { Button } from "~/components/ui/button";
+import { Switch } from "~/components/ui/switch";
 import { useTheme } from "~/context";
 import { createDefaultLlmConfig } from "~/domains/ai";
 import { getLlmConfig } from "~/domains/ai/repositories";
-import { cn } from "~/utils/css";
+import { cn } from "~/lib/utils";
 import styles from "./_index.module.css";
 import type { clientAction as contentAction } from "./content";
 import { LlmConfigurer } from "./llm-config";
@@ -17,7 +17,7 @@ import type { clientAction as questionAction } from "./question";
 
 export function meta() {
 	return [
-		{ title: "Thought-Expanding AI Assist Editor" },
+		{ title: "DeAI - Thought-Expanding AI Assist Editor" },
 		{
 			name: "description",
 			content: "Write your thoughts and get AI-powered questions to expand your thinking",
@@ -55,7 +55,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 		<div className={cn("h-full bg-background", styles.root, theme)}>
 			{/* Header with theme toggle */}
 			<header className="flex items-center justify-between p-4 border-b">
-				<h1 className="text-xl font-semibold">🧠 Thought-Expanding AI Assist Editor</h1>
+				<h1 className="text-xl font-semibold">DeAI</h1>
 				<div className="flex items-center space-x-2">
 					<SunIcon size={16} />
 					<Switch id="airplane-mode" checked={theme === "dark"} onCheckedChange={toggleTheme} />

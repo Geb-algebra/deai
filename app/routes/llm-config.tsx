@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { data, useFetcher } from "react-router";
-import { Button } from "~/components/atoms/button";
+import { Button } from "~/components/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -9,16 +9,16 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "~/components/atoms/dialog";
-import { Input } from "~/components/atoms/input";
-import { Label } from "~/components/atoms/label";
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "~/components/atoms/select";
+} from "~/components/ui/select";
 import { type LlmConfig, LlmConfigSchema, type ModelProvider } from "~/domains/ai";
 import { AI_MODELS } from "~/domains/ai/constants";
 import { setLlmConfig } from "~/domains/ai/repositories";

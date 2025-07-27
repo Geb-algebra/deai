@@ -3,10 +3,10 @@ import Quill, { Delta } from "quill";
 import "quill/dist/quill.bubble.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { copyQuillContentAsMarkdown } from "~/components/services";
-import { cn } from "~/utils/css";
-import { Button } from "./atoms/Button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./atoms/tooltip";
+import { cn } from "~/lib/utils";
 import "./QuillEditor.css";
+import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 type RecoverableContent = string;
 
