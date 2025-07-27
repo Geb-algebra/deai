@@ -5,6 +5,10 @@ import type { Route } from "./+types/question";
 
 const QuestionerSchema = z.object({
 	content: z.string().min(1, "Content is required"),
+	markdownContent: z.string().optional().default(""),
+	focusedContent: z.string().optional(),
+	currentParagraph: z.string().optional(),
+	currentSection: z.string().optional(),
 	previousQuestions: z.array(z.string()).optional().default([]),
 });
 
@@ -15,12 +19,29 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 	}
 
 	const formData = await request.json();
-	const { content, previousQuestions } = QuestionerSchema.parse(formData);
+	const {
+		content,
+		markdownContent,
+		focusedContent,
+		currentParagraph,
+		currentSection,
+		previousQuestions,
+	} = QuestionerSchema.parse(formData);
 	const llmConfig = await getLlmConfig();
 	if (!llmConfig.apiKey) {
 		return { questions: previousQuestions, error: "LLM config is not set" };
 	}
-	const question = await generateQuestion(content, llmConfig, previousQuestions);
+
+	// Create focused content input for the AI
+	const contentInput = {
+		fullContent: content,
+		markdownContent,
+		focusedContent,
+		currentParagraph,
+		currentSection,
+	};
+
+	const question = await generateQuestion(contentInput, llmConfig, previousQuestions);
 	if (!question) {
 		return { questions: previousQuestions, error: "Failed to generate question" };
 	}

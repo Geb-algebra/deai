@@ -84,10 +84,27 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 										},
 									);
 								}}
-								onIdle={({ plainText }) => {
+								onIdle={({
+									plainText,
+									markdownContent,
+									focusedContent,
+									currentParagraph,
+									currentSection,
+								}) => {
 									questionFetcher.submit(
-										{ content: plainText, previousQuestions: questions || [] },
-										{ method: "post", action: "/question", encType: "application/json" },
+										{
+											content: plainText,
+											markdownContent: markdownContent || "",
+											focusedContent: focusedContent || "",
+											currentParagraph: currentParagraph || "",
+											currentSection: currentSection || "",
+											previousQuestions: questions || [],
+										},
+										{
+											method: "post",
+											action: "/question",
+											encType: "application/json",
+										},
 									);
 								}}
 							/>

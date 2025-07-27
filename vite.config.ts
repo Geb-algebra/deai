@@ -12,5 +12,10 @@ export default defineConfig({
 			externalConditions: ["workerd", "worker"],
 		},
 	},
-	plugins: [cloudflare({ viteEnvironment: { name: "ssr" } }), tailwindcss(), reactRouter(), tsconfigPaths()],
+	plugins: [
+		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		tailwindcss(),
+		reactRouter(),
+		tsconfigPaths(),
+	],
 });
